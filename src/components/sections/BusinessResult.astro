@@ -1,0 +1,41 @@
+---
+/* Секция 01 — результат для бизнеса. */
+import Section from '~/components/ui/Section.astro';
+import SectionLabel from '~/components/ui/SectionLabel.astro';
+import SectionHeading from '~/components/ui/SectionHeading.astro';
+import ResultList from '~/components/ui/ResultList.astro';
+import { businessResult } from '~/data/content';
+---
+
+<Section id="result" labelledby="result-heading">
+  <div class="split">
+    <div class="split__aside">
+      <SectionLabel>{businessResult.label}</SectionLabel>
+      <SectionHeading size="h2-lg" id="result-heading">{businessResult.heading}</SectionHeading>
+      <p class="split__lead">{businessResult.lead}</p>
+    </div>
+
+    <ResultList items={businessResult.items} />
+  </div>
+</Section>
+
+<style>
+  .split {
+    display: grid;
+    grid-template-columns: 0.75fr 1fr;
+    gap: 60px;
+  }
+
+  .split__aside {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .split__lead {
+    max-width: 380px;
+    font-size: var(--fs-body-sm);
+    line-height: var(--lh-text);
+    color: var(--olive);
+  }
+</style>

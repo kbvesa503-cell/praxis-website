@@ -1,0 +1,47 @@
+---
+/* Секция 05 — первый шаг: один процесс или отдел, а не вся компания. */
+import Section from '~/components/ui/Section.astro';
+import SectionLabel from '~/components/ui/SectionLabel.astro';
+import SectionHeading from '~/components/ui/SectionHeading.astro';
+import IndexedList from '~/components/ui/IndexedList.astro';
+import Button from '~/components/ui/Button.astro';
+import { firstStep } from '~/data/content';
+---
+
+<Section id="first-step" pb="110px" labelledby="first-step-heading">
+  <div class="fstep">
+    <div class="fstep__aside">
+      <SectionLabel>{firstStep.label}</SectionLabel>
+      <SectionHeading size="h2-lg" id="first-step-heading">{firstStep.heading}</SectionHeading>
+      <p class="fstep__lead">{firstStep.lead}</p>
+      <div class="fstep__action">
+        <Button data-cta="first-step">{firstStep.cta}</Button>
+      </div>
+    </div>
+
+    <IndexedList items={firstStep.items} size="sm" />
+  </div>
+</Section>
+
+<style>
+  .fstep {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 72px;
+  }
+
+  .fstep__aside {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .fstep__lead {
+    max-width: 420px;
+    font-size: var(--fs-body-sm);
+    line-height: var(--lh-text);
+    color: var(--olive);
+  }
+
+  .fstep__action { margin-top: 12px; }
+</style>

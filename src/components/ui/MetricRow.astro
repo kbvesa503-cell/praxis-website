@@ -1,0 +1,108 @@
+---
+/*
+ * Ряд показателей: метка → крупная цифра → подпись.
+ * solid  — логика экономического эффекта (секция 03);
+ * dashed — плейсхолдер будущих кейсов (секция 06), намеренно пустой.
+ */
+import type { MetricItem } from '~/data/content';
+
+interface Props {
+  metrics: readonly MetricItem[];
+  variant?: 'solid' | 'dashed';
+  class?: string;
+}
+
+const { metrics, variant = 'solid', class: className } = Astro.props;
+---
+
+<dl
+  class:list={['metrics', `metrics--${variant}`, className]}
+  style={`--metrics-cols:${metrics.length}`}
+>
+  {
+    metrics.map((m) => (
+      <div class:list={['metric', m.accent && 'is-accent']}>
+        <dt class="metric__label">{m.label}</dt>
+        <dd class="metric__value">{m.value}</dd>
+        {m.caption && <dd class="metric__caption">{m.caption}</dd>}
+      </div>
+    ))
+  }
+</dl>
+
+<style>
+  .metrics {
+    display: grid;
+    grid-template-columns: repeat(var(--metrics-cols), 1fr);
+  }
+
+  .metric {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .metric__label {
+    font-family: var(--font-mono);
+    font-size: var(--fs-label);
+    line-height: var(--lh-ui);
+    letter-spacing: var(--ls-label-mid);
+    text-transform: uppercase;
+    color: var(--mute);
+  }
+
+  .metric.is-accent .metric__label { color: var(--olive); }
+
+  .metric__value {
+    margin: 0;
+    font-family: var(--font-display);
+    font-weight: 500;
+    letter-spacing: var(--ls-num);
+    line-height: 1;
+    color: var(--ink);
+  }
+
+  .metric.is-accent .metric__value { color: var(--olive); }
+
+  .metric__caption {
+    margin: 0;
+    font-size: var(--fs-caption);
+    line-height: var(--lh-ui);
+    color: var(--text-quiet);
+  }
+
+  /* ---- solid ----------------------------------------------------------- */
+  .metrics--solid { border-top: var(--rule) solid var(--line-strong); }
+
+  .metrics--solid .metric {
+    padding: 26px 24px 0;
+    border-right: var(--rule) solid var(--line);
+  }
+
+  .metrics--solid .metric:first-child { padding-left: 0; }
+  .metrics--solid .metric:last-child { padding-right: 0; border-right: 0; }
+
+  .metrics--solid .metric__value { font-size: var(--fs-num-lg); }
+
+  /* ---- dashed ---------------------------------------------------------- */
+  .metrics--dashed {
+    border: var(--rule) dashed var(--line);
+    padding: 48px;
+  }
+
+  .metrics--dashed .metric {
+    gap: 8px;
+    padding-inline: 24px;
+    border-right: var(--rule) dashed var(--line);
+  }
+
+  .metrics--dashed .metric:first-child { padding-left: 0; }
+  .metrics--dashed .metric:last-child { padding-right: 0; border-right: 0; }
+
+  .metrics--dashed .metric__value {
+    font-size: var(--fs-num-sm);
+    color: var(--mute);
+  }
+
+  .metrics--dashed .metric.is-accent .metric__value { color: var(--olive); }
+</style>

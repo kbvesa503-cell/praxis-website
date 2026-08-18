@@ -1,0 +1,54 @@
+---
+/*
+ * Основной lockup: знак + название.
+ * Выравнивание по нижней линии, кегль названия ≈ 0,9 высоты знака,
+ * wordmark — Commissioner Medium, капитель, трекинг +3 % (Brand Core 02).
+ * Перенабор другим шрифтом или начертанием не допускается.
+ */
+import Logo from './Logo.astro';
+
+interface Props {
+  markHeight: number;
+  fontSize: number;
+  gap?: number;
+  variant?: 'main' | 'inverse' | 'mono';
+  color?: string;
+  class?: string;
+}
+
+const {
+  markHeight,
+  fontSize,
+  gap = 12,
+  variant = 'main',
+  color = '#000000',
+  class: className,
+} = Astro.props;
+
+const wordColor = variant === 'inverse' ? '#FFFFFF' : variant === 'mono' ? color : 'currentColor';
+---
+
+<span
+  class:list={['lockup', className]}
+  style={`--lockup-gap:${gap}px; --lockup-fs:${fontSize}px; --lockup-word:${wordColor};`}
+>
+  <Logo height={markHeight} variant={variant} color={color} />
+  <span class="lockup__word">PRAXIS</span>
+</span>
+
+<style>
+  .lockup {
+    display: inline-flex;
+    align-items: flex-end;
+    gap: var(--lockup-gap);
+  }
+
+  .lockup__word {
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: var(--lockup-fs);
+    letter-spacing: var(--ls-wordmark);
+    line-height: 0.85;
+    color: var(--lockup-word);
+  }
+</style>

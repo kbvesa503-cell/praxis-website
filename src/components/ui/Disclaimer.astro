@@ -1,0 +1,28 @@
+---
+/*
+ * Сноска под блоком: оговорка о характере цифр или статусе раздела.
+ */
+interface Props {
+  rule?: boolean;
+  class?: string;
+}
+
+const { rule = true, class: className } = Astro.props;
+---
+
+<p class:list={['disclaimer', rule && 'disclaimer--rule', className]}>
+  <slot />
+</p>
+
+<style>
+  .disclaimer {
+    font-size: var(--fs-caption);
+    line-height: var(--lh-text);
+    color: var(--text-quiet);
+  }
+
+  .disclaimer--rule {
+    border-top: var(--rule) solid var(--line);
+    padding-top: 22px;
+  }
+</style>

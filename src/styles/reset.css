@@ -1,0 +1,36 @@
+/* Минимальный сброс. Ничего декоративного — только предсказуемая база. */
+
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body,
+h1, h2, h3, h4,
+p, figure, blockquote,
+dl, dd, ol, ul { margin: 0; }
+
+ol, ul {
+  padding: 0;
+  list-style: none;
+}
+
+h1, h2, h3, h4 {
+  font-size: inherit;
+  font-weight: inherit;
+}
+
+img, svg, video { display: block; max-width: 100%; }
+
+button, input, textarea, select {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  margin: 0;
+}
+
+button { cursor: pointer; }
+
+a { color: inherit; text-decoration: none; }

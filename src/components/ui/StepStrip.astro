@@ -1,0 +1,97 @@
+---
+/*
+ * Полоса шагов метода в двух исполнениях макета:
+ *  rule — пять шагов под первым экраном, разделённые линиями;
+ *  bar  — семь шагов в бежевой секции, с чёрной планкой над каждым.
+ */
+interface Props {
+  steps: readonly string[];
+  variant?: 'rule' | 'bar';
+  /** Номер выделенного шага (для варианта bar). */
+  active?: number;
+  class?: string;
+}
+
+const { steps, variant = 'rule', active, class: className } = Astro.props;
+const pad = (n: number) => String(n).padStart(2, '0');
+---
+
+<ol
+  class:list={['strip', `strip--${variant}`, className]}
+  style={`--strip-cols:${steps.length}`}
+>
+  {
+    steps.map((step, i) => (
+      <li class:list={['strip__item', active === i + 1 && 'is-active']}>
+        {variant === 'bar' && <span class="strip__bar" aria-hidden="true" />}
+        <span class="strip__idx" aria-hidden="true">{pad(i + 1)}</span>
+        <span class="strip__title">{step}</span>
+      </li>
+    ))
+  }
+</ol>
+
+<style>
+  .strip {
+    display: grid;
+    grid-template-columns: repeat(var(--strip-cols), 1fr);
+  }
+
+  .strip__idx {
+    font-family: var(--font-mono);
+    line-height: var(--lh-ui);
+  }
+
+  .strip__title {
+    font-family: var(--font-text);
+    font-weight: 500;
+    line-height: var(--lh-ui);
+  }
+
+  /* ---- Вариант rule ---------------------------------------------------- */
+  .strip--rule { gap: 28px; }
+
+  .strip--rule .strip__item {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    border-top: var(--rule) solid var(--line);
+    padding-top: 12px;
+  }
+
+  .strip--rule .strip__item:first-child { border-top-color: var(--line-strong); }
+
+  .strip--rule .strip__idx {
+    font-size: var(--fs-label-md);
+    letter-spacing: var(--ls-label-tight);
+    color: var(--mute);
+  }
+
+  .strip--rule .strip__item:first-child .strip__idx { color: var(--olive); }
+
+  .strip--rule .strip__title { font-size: var(--fs-body); }
+
+  /* ---- Вариант bar ----------------------------------------------------- */
+  .strip--bar { gap: 4px; align-items: stretch; }
+
+  .strip--bar .strip__item {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .strip__bar {
+    display: block;
+    height: 2px;
+    background: var(--ink);
+  }
+
+  .strip--bar .strip__idx {
+    font-size: var(--fs-label-md);
+    color: var(--olive);
+  }
+
+  .strip--bar .strip__item.is-active .strip__idx { color: var(--ink); }
+
+  .strip--bar .strip__title { font-size: var(--fs-body-sm); }
+</style>

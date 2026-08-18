@@ -1,0 +1,62 @@
+/* Базовая типографика и общие примитивы страницы. */
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--paper);
+  color: var(--text);
+  font-family: var(--font-text);
+  font-weight: 400;
+  font-size: var(--fs-body-sm);
+  line-height: var(--lh-text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: 'tnum' 0;
+}
+
+/* Якорная навигация не должна прятать заголовок под липкой шапкой. */
+[id] { scroll-margin-top: 120px; }
+
+/* Единое кольцо фокуса на всей странице. Фокус — состояние, а не декор. */
+:focus-visible {
+  outline: 2px solid var(--olive);
+  outline-offset: 2px;
+}
+
+::selection {
+  background: var(--sand);
+  color: var(--ink);
+}
+
+/* Доступное скрытие: контент остаётся для скринридеров. */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+.skip-link {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 100;
+  padding: 12px 20px;
+  background: var(--ink);
+  color: var(--paper);
+  font-family: var(--font-mono);
+  font-size: var(--fs-label-md);
+  letter-spacing: var(--ls-label-tight);
+  transform: translateY(-120%);
+}
+
+.skip-link:focus-visible {
+  transform: translateY(0);
+}

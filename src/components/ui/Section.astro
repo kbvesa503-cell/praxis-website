@@ -1,0 +1,71 @@
+---
+/*
+ * Обёртка секции: верхняя разделительная линия + вертикальный ритм.
+ * Фон и линия идут во всю ширину экрана (архитектурная линия чертежа),
+ * контент ограничен полосой 1440 с полями — как на утверждённом холсте.
+ */
+interface Props {
+  id?: string;
+  tone?: 'paper' | 'sand' | 'ink';
+  /** Верхняя линия секции. В концепте она чёрная у всех секций. */
+  rule?: 'ink' | 'none';
+  pt?: string;
+  pb?: string;
+  labelledby?: string;
+  class?: string;
+}
+
+const {
+  id,
+  tone = 'paper',
+  rule = 'ink',
+  pt,
+  pb,
+  labelledby,
+  class: className,
+} = Astro.props;
+
+const style = [pt && `--sec-pt:${pt}`, pb && `--sec-pb:${pb}`]
+  .filter(Boolean)
+  .join(';');
+---
+
+<section
+  id={id}
+  aria-labelledby={labelledby}
+  class:list={['section', `section--${tone}`, rule === 'none' && 'section--flush', className]}
+  style={style || undefined}
+>
+  <div class="section__inner">
+    <slot />
+  </div>
+</section>
+
+<style>
+  .section {
+    --sec-pt: var(--section-py);
+    --sec-pb: var(--section-py);
+
+    border-top: var(--rule) solid var(--line-strong);
+    padding-block: var(--sec-pt) var(--sec-pb);
+  }
+
+  .section--flush { border-top: 0; }
+
+  .section--sand {
+    background: var(--sand);
+    color: var(--ink);
+  }
+
+  .section--ink {
+    background: var(--ink);
+    color: var(--paper);
+  }
+
+  .section__inner {
+    width: 100%;
+    max-width: var(--page-max);
+    margin-inline: auto;
+    padding-inline: var(--gutter);
+  }
+</style>

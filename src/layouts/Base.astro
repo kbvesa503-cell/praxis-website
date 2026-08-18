@@ -1,0 +1,75 @@
+---
+/*
+ * Каркас документа: метаданные, предзагрузка шрифтов, глобальные стили.
+ */
+import '~/styles/reset.css';
+import '~/styles/tokens.css';
+import '~/styles/fonts.css';
+import '~/styles/base.css';
+
+import { site } from '~/data/content';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const { title = site.title, description = site.description } = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+
+const orgJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: site.name,
+  url: Astro.site?.href,
+  slogan: site.tagline,
+  description: site.description,
+};
+---
+
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <meta name="theme-color" content="#FFFFFF" />
+
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:locale" content={site.locale} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={new URL('/og-image.png', Astro.site).href} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    {/* Начертания первого экрана — до того, как браузер дойдёт до CSS. */}
+    <link
+      rel="preload" as="font" type="font/woff2" crossorigin
+      href="/fonts/commissioner-500-cyrillic.woff2"
+    />
+    <link
+      rel="preload" as="font" type="font/woff2" crossorigin
+      href="/fonts/golos-400-cyrillic.woff2"
+    />
+    <link
+      rel="preload" as="font" type="font/woff2" crossorigin
+      href="/fonts/plexmono-400-cyrillic.woff2"
+    />
+
+    <script type="application/ld+json" set:html={JSON.stringify(orgJsonLd)} is:inline />
+  </head>
+
+  <body>
+    <a class="skip-link" href="#main">К основному содержанию</a>
+    <slot />
+  </body>
+</html>

@@ -1,0 +1,78 @@
+---
+/*
+ * Кнопка-пилюля. В макете встречается пять раз в двух исполнениях:
+ * чёрная на светлом фоне и белая на чёрном.
+ * Ховер — только приглушение прозрачности: это не вводит шестого цвета
+ * и не нарушает запрет оливкового в шапке (Brand Core 08).
+ */
+interface Props {
+  href?: string;
+  variant?: 'onLight' | 'onDark';
+  size?: 'sm' | 'md';
+  type?: 'button' | 'submit';
+  class?: string;
+  'data-cta'?: string;
+}
+
+const {
+  href,
+  variant = 'onLight',
+  size = 'md',
+  type = 'button',
+  class: className,
+  ...rest
+} = Astro.props;
+
+const Tag = href ? 'a' : 'button';
+---
+
+<Tag
+  href={href}
+  type={href ? undefined : type}
+  class:list={['btn', `btn--${variant}`, `btn--${size}`, className]}
+  {...rest}
+>
+  <slot />
+</Tag>
+
+<style>
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    font-family: var(--font-text);
+    font-weight: 400;
+    line-height: var(--lh-ui);
+    text-align: center;
+    white-space: nowrap;
+    transition: opacity var(--dur-fast) var(--ease);
+  }
+
+  .btn:hover { opacity: 0.85; }
+  .btn:active { opacity: 0.75; }
+
+  .btn--md {
+    font-size: var(--fs-body);
+    padding: 19px 38px;
+  }
+
+  .btn--sm {
+    font-size: var(--fs-ui);
+    padding: 11px 22px;
+  }
+
+  .btn--onLight {
+    background: var(--ink);
+    color: var(--paper);
+  }
+
+  .btn--onDark {
+    background: var(--paper);
+    color: var(--ink);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .btn { transition: none; }
+  }
+</style>

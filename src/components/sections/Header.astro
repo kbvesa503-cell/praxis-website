@@ -1,0 +1,49 @@
+---
+/*
+ * Шапка: lockup слева, навигация и основное действие справа.
+ * Оливковый в шапке используется только как квадрат знака —
+ * в тексте и интерфейсе его нет (Brand Core 08).
+ */
+import Lockup from '~/components/brand/Lockup.astro';
+import Nav from '~/components/ui/Nav.astro';
+import Button from '~/components/ui/Button.astro';
+import { nav, hero } from '~/data/content';
+---
+
+<header class="header" data-header>
+  <div class="header__inner">
+    <a class="header__brand" href="#top" aria-label="PRAXIS — на главную">
+      <Lockup markHeight={29} fontSize={20} />
+    </a>
+
+    <nav class="header__nav" aria-label="Основная навигация">
+      <Nav links={nav} />
+      <Button size="sm" data-cta="header">{hero.cta}</Button>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .header {
+    border-bottom: var(--rule) solid var(--line);
+    background: var(--paper);
+  }
+
+  .header__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    max-width: var(--page-max);
+    margin-inline: auto;
+    padding: var(--header-py) var(--gutter);
+  }
+
+  .header__brand { display: inline-flex; }
+
+  .header__nav {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+  }
+</style>

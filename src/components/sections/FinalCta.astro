@@ -1,0 +1,27 @@
+---
+/* Финальный призыв на чёрном фоне. */
+import Section from '~/components/ui/Section.astro';
+import SectionLabel from '~/components/ui/SectionLabel.astro';
+import SectionHeading from '~/components/ui/SectionHeading.astro';
+import Button from '~/components/ui/Button.astro';
+import { finalCta } from '~/data/content';
+---
+
+<Section id="contact" tone="ink" pt="110px" pb="110px" labelledby="cta-heading">
+  <div class="cta">
+    <SectionLabel tone="sand">{finalCta.label}</SectionLabel>
+    <SectionHeading size="h2-cta" tone="paper" id="cta-heading" measure={780}>
+      {finalCta.heading}
+    </SectionHeading>
+    <Button variant="onDark" data-cta="final">{finalCta.cta}</Button>
+  </div>
+</Section>
+
+<style>
+  .cta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 34px;
+  }
+</style>

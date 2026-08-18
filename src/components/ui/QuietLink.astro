@@ -1,0 +1,36 @@
+---
+/*
+ * Второстепенное действие рядом с основной кнопкой:
+ * оливковый текст с серым подчёркиванием.
+ */
+interface Props {
+  href: string;
+  class?: string;
+}
+
+const { href, class: className, ...rest } = Astro.props;
+---
+
+<a href={href} class:list={['quiet-link', className]} {...rest}>
+  <slot />
+</a>
+
+<style>
+  .quiet-link {
+    display: inline-block;
+    align-self: center;
+    font-size: var(--fs-body);
+    line-height: var(--lh-ui);
+    color: var(--olive);
+    white-space: nowrap;
+    border-bottom: var(--rule) solid var(--mute);
+    padding-bottom: 3px;
+    transition: border-color var(--dur-fast) var(--ease);
+  }
+
+  .quiet-link:hover { border-bottom-color: var(--olive); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .quiet-link { transition: none; }
+  }
+</style>

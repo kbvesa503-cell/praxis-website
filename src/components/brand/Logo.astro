@@ -1,0 +1,44 @@
+---
+/*
+ * Знак PRAXIS. Геометрия зафиксирована Brand Core v1.0 и не масштабируется
+ * непропорционально, не наклоняется и не перекрашивается вне трёх версий.
+ * Квадрат — отдельный элемент, чтобы менять его цвет в инверсной и
+ * монохромной версиях (требование раздела 10 Brand Core).
+ */
+interface Props {
+  /** Высота знака в px. Минимум по Brand Core — 16 px, ниже только монохром. */
+  height: number;
+  variant?: 'main' | 'inverse' | 'mono';
+  /** Цвет для монохромной версии. */
+  color?: string;
+  class?: string;
+}
+
+const { height, variant = 'main', color = '#000000', class: className } = Astro.props;
+
+/* Габарит знака с выносом квадрата — 114 × 149 (Brand Core 01). */
+const width = Math.round((height * 114) / 149);
+
+const fills = {
+  main: { square: '#52513C', mark: '#000000' },
+  inverse: { square: '#52513C', mark: '#FFFFFF' },
+  mono: { square: color, mark: color },
+}[variant];
+---
+
+<svg
+  width={width}
+  height={height}
+  viewBox="-14 0 114 149"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+  class={className}
+  aria-hidden="true"
+  focusable="false"
+>
+  <rect x="-14" y="0" width="38" height="38" fill={fills.square} />
+  <path
+    d="M 0,67 L 24,43 L 100,43 L 100,149 L 72,149 L 72,71 L 34,71 L 28,77 L 28,149 L 0,149 Z"
+    fill={fills.mark}
+  />
+</svg>

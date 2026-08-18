@@ -1,0 +1,46 @@
+---
+/* Подвал: lockup, навигация, копирайт. */
+import Lockup from '~/components/brand/Lockup.astro';
+import Nav from '~/components/ui/Nav.astro';
+import { footerNav, footer } from '~/data/content';
+---
+
+<footer class="footer">
+  <div class="footer__inner">
+    <a class="footer__brand" href="#top" aria-label="PRAXIS — наверх">
+      <Lockup markHeight={24} fontSize={16} />
+    </a>
+
+    <nav aria-label="Навигация в подвале">
+      <Nav links={footerNav} tone="olive" size="sm" />
+    </nav>
+
+    <span class="footer__copy">{footer.copyright}</span>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    border-top: var(--rule) solid var(--line-strong);
+  }
+
+  .footer__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    max-width: var(--page-max);
+    margin-inline: auto;
+    padding: 48px var(--gutter);
+  }
+
+  .footer__brand { display: inline-flex; }
+
+  .footer__copy {
+    font-family: var(--font-mono);
+    font-size: var(--fs-label-md);
+    line-height: var(--lh-ui);
+    letter-spacing: 0.1em;
+    color: var(--mute);
+  }
+</style>

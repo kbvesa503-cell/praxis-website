@@ -1,0 +1,79 @@
+---
+/*
+ * Первый экран: обещание слева, схема перестройки процесса справа.
+ */
+import Section from '~/components/ui/Section.astro';
+import SectionLabel from '~/components/ui/SectionLabel.astro';
+import SectionHeading from '~/components/ui/SectionHeading.astro';
+import Button from '~/components/ui/Button.astro';
+import QuietLink from '~/components/ui/QuietLink.astro';
+import Legend from '~/components/ui/Legend.astro';
+import HeroDiagram from '~/components/hero/HeroDiagram.astro';
+import { hero } from '~/data/content';
+---
+
+<Section rule="none" pt="100px" pb="72px" class="hero" labelledby="hero-heading">
+  <div class="hero__grid">
+    <div class="hero__copy">
+      <SectionLabel tone="olive" size="md">{hero.eyebrow}</SectionLabel>
+
+      <SectionHeading as="h1" size="h1" id="hero-heading">
+        {
+          hero.headingLines.map((line, i) => (
+            <>
+              {i > 0 && <br />}
+              {line}
+            </>
+          ))
+        }
+      </SectionHeading>
+
+      <p class="hero__lead">{hero.lead}</p>
+
+      <div class="hero__actions">
+        <Button data-cta="hero">{hero.cta}</Button>
+        <QuietLink href="#economics">{hero.secondaryCta}</QuietLink>
+      </div>
+    </div>
+
+    <div class="hero__figure">
+      <HeroDiagram />
+      <Legend items={hero.legend} />
+    </div>
+  </div>
+</Section>
+
+<style>
+  .hero__grid {
+    display: grid;
+    grid-template-columns: 1fr 580px;
+    gap: 68px;
+  }
+
+  .hero__copy {
+    display: flex;
+    flex-direction: column;
+    gap: 38px;
+  }
+
+  .hero__lead {
+    max-width: 520px;
+    font-size: var(--fs-lead);
+    line-height: var(--lh-text);
+  }
+
+  .hero__actions {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    margin-top: 6px;
+  }
+
+  .hero__figure {
+    display: flex;
+    flex-direction: column;
+    gap: 26px;
+    border-left: var(--rule) solid var(--line);
+    padding-left: 60px;
+  }
+</style>

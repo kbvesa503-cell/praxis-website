@@ -1,0 +1,51 @@
+---
+/*
+ * Список навигационных ссылок. Общий для шапки и подвала.
+ */
+import type { NavLink } from '~/data/content';
+
+interface Props {
+  links: readonly NavLink[];
+  tone?: 'ink' | 'olive';
+  size?: 'sm' | 'md';
+  class?: string;
+}
+
+const { links, tone = 'ink', size = 'md', class: className } = Astro.props;
+---
+
+<ul class:list={['nav', `nav--${tone}`, `nav--${size}`, className]}>
+  {
+    links.map((link) => (
+      <li>
+        <a href={link.href} class="nav__link">{link.label}</a>
+      </li>
+    ))
+  }
+</ul>
+
+<style>
+  .nav {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    line-height: var(--lh-ui);
+  }
+
+  .nav--md { font-size: var(--fs-ui); }
+  .nav--sm { font-size: var(--fs-caption); }
+
+  .nav--ink { color: var(--ink); }
+  .nav--olive { color: var(--olive); }
+
+  .nav__link {
+    transition: color var(--dur-fast) var(--ease);
+  }
+
+  .nav--ink .nav__link:hover { color: var(--olive); }
+  .nav--olive .nav__link:hover { color: var(--ink); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .nav__link { transition: none; }
+  }
+</style>

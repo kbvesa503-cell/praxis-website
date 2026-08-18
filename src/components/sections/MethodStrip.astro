@@ -1,0 +1,26 @@
+---
+/*
+ * Полоса метода под первым экраном.
+ * Последовательность зафиксирована стратегией: диагностика → расчёт →
+ * пилот → результат → масштабирование.
+ */
+import Section from '~/components/ui/Section.astro';
+import SectionLabel from '~/components/ui/SectionLabel.astro';
+import StepStrip from '~/components/ui/StepStrip.astro';
+import { methodStrip } from '~/data/content';
+---
+
+<Section id="method" pt="26px" pb="42px" labelledby="method-label">
+  <div class="method">
+    <SectionLabel id="method-label">{methodStrip.label}</SectionLabel>
+    <StepStrip steps={methodStrip.steps} variant="rule" />
+  </div>
+</Section>
+
+<style>
+  .method {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+</style>

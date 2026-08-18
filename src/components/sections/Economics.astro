@@ -1,0 +1,41 @@
+---
+/*
+ * Секция 03 — логика экономического эффекта.
+ * Цифры иллюстрируют методику расчёта и сопровождаются прямой оговоркой:
+ * это не обещание результата.
+ */
+import Section from '~/components/ui/Section.astro';
+import SectionLabel from '~/components/ui/SectionLabel.astro';
+import SectionHeading from '~/components/ui/SectionHeading.astro';
+import MetricRow from '~/components/ui/MetricRow.astro';
+import Disclaimer from '~/components/ui/Disclaimer.astro';
+import { economics } from '~/data/content';
+---
+
+<Section id="economics" labelledby="economics-heading">
+  <div class="econ">
+    <div class="econ__head">
+      <SectionLabel>{economics.label}</SectionLabel>
+      <SectionHeading size="h2" id="economics-heading">{economics.heading}</SectionHeading>
+    </div>
+
+    <MetricRow metrics={economics.metrics} variant="solid" />
+
+    <Disclaimer>{economics.disclaimer}</Disclaimer>
+  </div>
+</Section>
+
+<style>
+  .econ {
+    display: flex;
+    flex-direction: column;
+    gap: 48px;
+  }
+
+  .econ__head {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    max-width: 640px;
+  }
+</style>

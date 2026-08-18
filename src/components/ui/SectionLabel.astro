@@ -1,0 +1,38 @@
+---
+/*
+ * Служебная метка секции: IBM Plex Mono, капитель, широкий трекинг.
+ * Встречается в макете восемь раз.
+ */
+interface Props {
+  tone?: 'mute' | 'olive' | 'sand' | 'ink';
+  size?: 'sm' | 'md';
+  as?: 'span' | 'h2' | 'p';
+  id?: string;
+  class?: string;
+}
+
+const { tone = 'mute', size = 'sm', as: Tag = 'span', id, class: className } = Astro.props;
+---
+
+<Tag id={id} class:list={['label', `label--${tone}`, `label--${size}`, className]}>
+  <slot />
+</Tag>
+
+<style>
+  .label {
+    display: block;
+    font-family: var(--font-mono);
+    font-weight: 400;
+    line-height: var(--lh-ui);
+    letter-spacing: var(--ls-label);
+    text-transform: uppercase;
+  }
+
+  .label--sm { font-size: var(--fs-label); }
+  .label--md { font-size: var(--fs-label-lg); }
+
+  .label--mute { color: var(--mute); }
+  .label--olive { color: var(--olive); }
+  .label--sand { color: var(--sand); }
+  .label--ink { color: var(--ink); }
+</style>

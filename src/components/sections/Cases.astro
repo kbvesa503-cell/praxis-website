@@ -1,0 +1,41 @@
+---
+/*
+ * Секция 06 — доказательства результата.
+ * Осознанно пустой каркас: кейсы появятся здесь с цифрами клиентов
+ * после завершения первых пилотов. Придуманных примеров тут нет и не будет.
+ */
+import Section from '~/components/ui/Section.astro';
+import SectionLabel from '~/components/ui/SectionLabel.astro';
+import SectionHeading from '~/components/ui/SectionHeading.astro';
+import MetricRow from '~/components/ui/MetricRow.astro';
+import Disclaimer from '~/components/ui/Disclaimer.astro';
+import { cases } from '~/data/content';
+---
+
+<Section id="cases" labelledby="cases-heading">
+  <div class="cases">
+    <div class="cases__head">
+      <SectionLabel>{cases.label}</SectionLabel>
+      <SectionHeading size="h2" id="cases-heading">{cases.heading}</SectionHeading>
+    </div>
+
+    <MetricRow metrics={cases.placeholder} variant="dashed" />
+
+    <Disclaimer rule={false}>{cases.note}</Disclaimer>
+  </div>
+</Section>
+
+<style>
+  .cases {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+  }
+
+  .cases__head {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    max-width: 640px;
+  }
+</style>

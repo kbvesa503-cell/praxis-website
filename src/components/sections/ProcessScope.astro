@@ -1,0 +1,54 @@
+---
+/* Секция 04 — какие процессы имеет смысл пересматривать. */
+import Section from '~/components/ui/Section.astro';
+import SectionLabel from '~/components/ui/SectionLabel.astro';
+import SectionHeading from '~/components/ui/SectionHeading.astro';
+import IndexedList from '~/components/ui/IndexedList.astro';
+import { processScope } from '~/data/content';
+
+/* Две колонки макета: 01–04 и 05–07, нумерация сквозная. */
+const left = processScope.items.slice(0, 4);
+const right = processScope.items.slice(4);
+---
+
+<Section id="processes" labelledby="processes-heading">
+  <div class="split">
+    <div class="split__aside">
+      <SectionLabel>{processScope.label}</SectionLabel>
+      <SectionHeading size="h2-lg" id="processes-heading">{processScope.heading}</SectionHeading>
+      <p class="split__lead">{processScope.lead}</p>
+    </div>
+
+    <div class="split__columns">
+      <IndexedList items={left} start={1} size="md" />
+      <IndexedList items={right} start={5} size="md" />
+    </div>
+  </div>
+</Section>
+
+<style>
+  .split {
+    display: grid;
+    grid-template-columns: 0.75fr 1fr;
+    gap: 60px;
+  }
+
+  .split__aside {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .split__lead {
+    max-width: 380px;
+    font-size: var(--fs-body-sm);
+    line-height: var(--lh-text);
+    color: var(--olive);
+  }
+
+  .split__columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 48px;
+  }
+</style>

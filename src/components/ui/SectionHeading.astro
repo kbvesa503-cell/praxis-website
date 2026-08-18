@@ -1,0 +1,59 @@
+---
+/*
+ * Заголовок секции. Commissioner Medium — единственный вес в системе,
+ * смешанный регистр, трекинг −2 % (Brand Core 04).
+ */
+interface Props {
+  as?: 'h1' | 'h2';
+  size?: 'h1' | 'h2' | 'h2-lg' | 'h2-cta';
+  tone?: 'ink' | 'paper';
+  /** Мера строки в px. Ограничение ширины задаётся здесь, а не снаружи:
+      scoped-стили родителя не долетают до элементов внутри компонента. */
+  measure?: number;
+  id?: string;
+  class?: string;
+}
+
+const {
+  as: Tag = 'h2',
+  size = 'h2',
+  tone = 'ink',
+  measure,
+  id,
+  class: className,
+} = Astro.props;
+---
+
+<Tag
+  id={id}
+  class:list={['heading', `heading--${size}`, `heading--${tone}`, className]}
+  style={measure ? `max-width:${measure}px` : undefined}
+>
+  <slot />
+</Tag>
+
+<style>
+  .heading {
+    font-family: var(--font-display);
+    font-weight: 500;
+    line-height: var(--lh-h2);
+    letter-spacing: var(--ls-h2);
+  }
+
+  /* Переносы первого экрана заданы вручную и не должны ломаться браузером:
+     на утверждённом холсте это раздвигает колонку грида до 664 px.
+     На узких экранах nowrap снимается — этап responsive. */
+  .heading--h1 {
+    font-size: var(--fs-h1);
+    line-height: var(--lh-h1);
+    letter-spacing: var(--ls-h1);
+    white-space: nowrap;
+  }
+
+  .heading--h2 { font-size: var(--fs-h2); }
+  .heading--h2-lg { font-size: var(--fs-h2-lg); }
+  .heading--h2-cta { font-size: var(--fs-h2-cta); line-height: 1.14; }
+
+  .heading--ink { color: var(--ink); }
+  .heading--paper { color: var(--paper); }
+</style>

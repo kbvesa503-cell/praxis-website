@@ -1,0 +1,55 @@
+---
+/*
+ * Легенда к схеме первого экрана: четыре образца цвета с подписями.
+ * Читает те же токены, что и сама схема, — расхождение невозможно.
+ */
+interface Props {
+  items: readonly { color: 'mute' | 'olive' | 'sand' | 'ink'; label: string }[];
+  class?: string;
+}
+
+const { items, class: className } = Astro.props;
+---
+
+<ul class:list={['legend', className]}>
+  {
+    items.map((item) => (
+      <li class="legend__item">
+        <span class:list={['legend__swatch', `legend__swatch--${item.color}`]} aria-hidden="true" />
+        <span class="legend__label">{item.label}</span>
+      </li>
+    ))
+  }
+</ul>
+
+<style>
+  .legend {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px 24px;
+    border-top: var(--rule) solid var(--line);
+    padding-top: 18px;
+  }
+
+  .legend__item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .legend__swatch {
+    flex: none;
+    width: 12px;
+    height: 12px;
+  }
+
+  .legend__swatch--mute { background: var(--mute); }
+  .legend__swatch--olive { background: var(--olive); }
+  .legend__swatch--sand { background: var(--sand); }
+  .legend__swatch--ink { background: var(--ink); }
+
+  .legend__label {
+    font-size: var(--fs-label-lg);
+    line-height: var(--lh-ui);
+  }
+</style>

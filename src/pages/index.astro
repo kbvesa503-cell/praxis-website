@@ -1,0 +1,39 @@
+---
+/*
+ * Лендинг PRAXIS. Страница — только композиция секций;
+ * вся вёрстка живёт в компонентах, все тексты — в src/data/content.ts.
+ */
+import Base from '~/layouts/Base.astro';
+
+import Header from '~/components/sections/Header.astro';
+import Hero from '~/components/sections/Hero.astro';
+import MethodStrip from '~/components/sections/MethodStrip.astro';
+import BusinessResult from '~/components/sections/BusinessResult.astro';
+import HowItWorks from '~/components/sections/HowItWorks.astro';
+import Economics from '~/components/sections/Economics.astro';
+import ProcessScope from '~/components/sections/ProcessScope.astro';
+import FirstStep from '~/components/sections/FirstStep.astro';
+import Cases from '~/components/sections/Cases.astro';
+import FinalCta from '~/components/sections/FinalCta.astro';
+import Footer from '~/components/sections/Footer.astro';
+---
+
+<Base>
+  <div id="top"></div>
+
+  <Header />
+
+  <main id="main">
+    <Hero />
+    <MethodStrip />
+    <BusinessResult />
+    <HowItWorks />
+    <Economics />
+    <ProcessScope />
+    <FirstStep />
+    <Cases />
+    <FinalCta />
+  </main>
+
+  <Footer />
+</Base>
