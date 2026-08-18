@@ -80,6 +80,13 @@ const pad = (n: number) => String(n).padStart(2, '0');
 
   .rlist__row:first-child .rlist__title { font-size: 22px; }
 
+  @media (max-width: 767px) {
+    .rlist__row {
+      grid-template-columns: 44px 1fr;
+      gap: 16px;
+    }
+  }
+
   .rlist__desc {
     font-size: var(--fs-ui);
     line-height: var(--lh-ui);

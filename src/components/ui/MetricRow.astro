@@ -105,4 +105,65 @@ const { metrics, variant = 'solid', class: className } = Astro.props;
   }
 
   .metrics--dashed .metric.is-accent .metric__value { color: var(--olive); }
+
+  /* При переносе в две колонки и в одну вертикальные разделители
+     превращаются в горизонтальные: линия между ячейками остаётся
+     всегда, меняется только её направление. */
+  @media (min-width: 600px) and (max-width: 1023px) {
+    .metrics--solid { grid-template-columns: repeat(2, 1fr); }
+
+    .metrics--solid .metric { padding: 26px 24px; }
+    .metrics--solid .metric:nth-child(odd) {
+      padding-left: 0;
+      border-right: var(--rule) solid var(--line);
+    }
+    .metrics--solid .metric:nth-child(even) {
+      padding-right: 0;
+      border-right: 0;
+    }
+    .metrics--solid .metric:nth-child(n + 3) { border-top: var(--rule) solid var(--line); }
+    .metrics--solid .metric:nth-last-child(-n + 2) { padding-bottom: 0; }
+
+    .metrics--dashed {
+      grid-template-columns: repeat(2, 1fr);
+      padding: 32px;
+    }
+
+    .metrics--dashed .metric { padding: 24px; }
+    .metrics--dashed .metric:nth-child(odd) {
+      padding-left: 0;
+      border-right: var(--rule) dashed var(--line);
+    }
+    .metrics--dashed .metric:nth-child(even) {
+      padding-right: 0;
+      border-right: 0;
+    }
+    .metrics--dashed .metric:nth-child(n + 3) { border-top: var(--rule) dashed var(--line); }
+    .metrics--dashed .metric:nth-child(-n + 2) { padding-top: 0; }
+    .metrics--dashed .metric:nth-last-child(-n + 2) { padding-bottom: 0; }
+  }
+
+  @media (max-width: 599px) {
+    .metrics--solid { grid-template-columns: minmax(0, 1fr); }
+
+    .metrics--solid .metric {
+      padding: 24px 0;
+      border-right: 0;
+    }
+    .metrics--solid .metric:not(:first-child) { border-top: var(--rule) solid var(--line); }
+    .metrics--solid .metric:last-child { padding-bottom: 0; }
+
+    .metrics--dashed {
+      grid-template-columns: minmax(0, 1fr);
+      padding: 24px;
+    }
+
+    .metrics--dashed .metric {
+      padding: 20px 0;
+      border-right: 0;
+    }
+    .metrics--dashed .metric:not(:first-child) { border-top: var(--rule) dashed var(--line); }
+    .metrics--dashed .metric:first-child { padding-top: 0; }
+    .metrics--dashed .metric:last-child { padding-bottom: 0; }
+  }
 </style>

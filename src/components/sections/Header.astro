@@ -46,4 +46,42 @@ import { nav, hero } from '~/data/content';
     align-items: center;
     gap: 30px;
   }
+
+  /* При трёх пунктах бургер-меню — лишняя механика:
+     ссылки уходят, основное действие остаётся на виду. */
+  @media (max-width: 767px) {
+    .header__nav :global(.nav) { display: none; }
+  }
+
+  /* Тач-цель кнопки — не меньше 44 px. */
+  @media (hover: none) {
+    .header__nav :global(.btn) { min-height: 44px; }
+  }
+
+  @media (max-width: 479px) {
+    .header__inner { gap: 12px; }
+
+    /* Знак остаётся выше минимума Brand Core (16 px знак / 19 px lockup). */
+    .header__brand :global(.lockup) {
+      --lockup-fs: 17px;
+      --lockup-gap: 9px;
+    }
+
+    .header__brand :global(svg) {
+      height: 25px;
+      width: auto;
+    }
+
+    .header__nav :global(.btn--sm) {
+      font-size: var(--fs-caption);
+      padding: 10px 16px;
+    }
+  }
+
+  @media (max-width: 359px) {
+    .header__nav :global(.btn--sm) {
+      font-size: var(--fs-label-lg);
+      padding: 10px 14px;
+    }
+  }
 </style>

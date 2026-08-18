@@ -44,4 +44,13 @@ import { firstStep } from '~/data/content';
   }
 
   .fstep__action { margin-top: 12px; }
+
+  @media (max-width: 1023px) {
+    .fstep {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 40px;
+    }
+
+    .fstep__lead { max-width: 560px; }
+  }
 </style>

@@ -32,26 +32,28 @@
   --font-text: 'Golos Text', 'Helvetica Neue', Arial, sans-serif;
   --font-mono: 'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
 
-  /* Заголовки — Commissioner 500, других весов в системе нет */
-  --fs-h1: 56px;
+  /* Заголовки — Commissioner 500, других весов в системе нет.
+     Плавная шкала: коэффициент vw подобран так, чтобы на 1440
+     значение точно совпадало с утверждённым макетом, а выше — не росло. */
+  --fs-h1: clamp(32px, 3.889vw, 56px);
   --lh-h1: 1.08;
   --ls-h1: -0.025em;
 
-  --fs-h2-lg: 42px;
-  --fs-h2: 40px;
-  --fs-h2-cta: 48px;
+  --fs-h2-lg: clamp(28px, 2.917vw, 42px);
+  --fs-h2: clamp(26px, 2.778vw, 40px);
+  --fs-h2-cta: clamp(30px, 3.333vw, 48px);
   --lh-h2: 1.12;
   --ls-h2: -0.02em;
 
   /* Цифры результата — Commissioner 500 */
-  --fs-num-lg: 40px;
-  --fs-num-md: 30px;
-  --fs-num-sm: 26px;
+  --fs-num-lg: clamp(28px, 2.778vw, 40px);
+  --fs-num-md: clamp(22px, 2.083vw, 30px);
+  --fs-num-sm: clamp(22px, 1.806vw, 26px);
   --ls-num: -0.02em;
 
   /* Текст — Golos Text, интерлиньяж 1.55 в тексте / 1.3 в интерфейсе */
-  --fs-lead: 18px;
-  --fs-body: 17px;
+  --fs-lead: clamp(16px, 1.25vw, 18px);
+  --fs-body: clamp(16px, 1.181vw, 17px);
   --fs-body-sm: 16px;
   --fs-ui: 15px;
   --fs-caption: 14px;
@@ -71,9 +73,12 @@
 
   /* ---- Ритм и сетка ---------------------------------------------------- */
   --page-max: 1440px;
-  --gutter: 80px;
-  --section-py: 96px;
-  --header-py: 34px;
+  --gutter: clamp(20px, 5.556vw, 80px);
+  --section-py: clamp(64px, 6.667vw, 96px);
+  --header-py: clamp(20px, 2.361vw, 34px);
+
+  /* Ширина схемы первого экрана на утверждённом холсте. */
+  --diagram-w: 504px;
 
   --rule: 1px;
 

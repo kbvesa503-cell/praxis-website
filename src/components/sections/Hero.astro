@@ -21,7 +21,9 @@ import { hero } from '~/data/content';
         {
           hero.headingLines.map((line, i) => (
             <>
-              {i > 0 && <br />}
+              {/* Пробел стоит перед переносом: на холсте 1440 он схлопывается
+                  в конце строки, а когда перенос скрыт — разделяет слова. */}
+              {i > 0 && <>{' '}<br class="hero__br" /></>}
               {line}
             </>
           ))
@@ -75,5 +77,43 @@ import { hero } from '~/data/content';
     gap: 26px;
     border-left: var(--rule) solid var(--line);
     padding-left: 60px;
+  }
+
+  /* Ниже 1440 колонка схемы перестаёт быть фиксированной,
+     ручные переносы заголовка снимаются. */
+  @media (max-width: 1439px) {
+    .hero__br { display: none; }
+
+    .hero__grid {
+      grid-template-columns: minmax(0, 1fr) minmax(0, var(--diagram-w));
+      gap: clamp(36px, 4.722vw, 68px);
+    }
+
+    .hero__figure { padding-left: clamp(28px, 4.167vw, 60px); }
+  }
+
+  /* Планшет и ниже: одна колонка. Левая граница колонки схемы
+     становится верхней линией — линия остаётся, характер не меняется. */
+  @media (max-width: 1023px) {
+    .hero__grid {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 48px;
+    }
+
+    .hero__copy { gap: 30px; }
+
+    .hero__figure {
+      border-left: 0;
+      border-top: var(--rule) solid var(--line);
+      padding-left: 0;
+      padding-top: 36px;
+    }
+  }
+
+  @media (max-width: 560px) {
+    .hero__actions {
+      flex-wrap: wrap;
+      gap: 22px;
+    }
   }
 </style>

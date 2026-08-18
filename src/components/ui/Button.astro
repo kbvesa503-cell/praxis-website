@@ -62,6 +62,14 @@ const Tag = href ? 'a' : 'button';
     padding: 11px 22px;
   }
 
+  @media (hover: none) {
+    .btn { min-height: 44px; }
+  }
+
+  @media (max-width: 479px) {
+    .btn--md { padding: 17px 30px; }
+  }
+
   .btn--onLight {
     background: var(--ink);
     color: var(--paper);

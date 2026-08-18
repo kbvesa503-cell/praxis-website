@@ -54,6 +54,12 @@ const {
   .heading--h2-lg { font-size: var(--fs-h2-lg); }
   .heading--h2-cta { font-size: var(--fs-h2-cta); line-height: 1.14; }
 
+  /* Ниже утверждённого холста заголовок первого экрана переносится
+     естественно: жёсткие переносы сняты, чтобы строка не выходила за поля. */
+  @media (max-width: 1439px) {
+    .heading--h1 { white-space: normal; }
+  }
+
   .heading--ink { color: var(--ink); }
   .heading--paper { color: var(--paper); }
 </style>

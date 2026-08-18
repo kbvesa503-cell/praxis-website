@@ -52,4 +52,8 @@ const { items, class: className } = Astro.props;
     font-size: var(--fs-label-lg);
     line-height: var(--lh-ui);
   }
+
+  @media (max-width: 479px) {
+    .legend { grid-template-columns: minmax(0, 1fr); }
+  }
 </style>

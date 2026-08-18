@@ -48,6 +48,9 @@ const pad = (n: number) => String(n).padStart(2, '0');
     line-height: var(--lh-ui);
   }
 
+  .strip__item { min-width: 0; }
+  .strip__title { overflow-wrap: break-word; }
+
   /* ---- Вариант rule ---------------------------------------------------- */
   .strip--rule { gap: 28px; }
 
@@ -70,6 +73,22 @@ const pad = (n: number) => String(n).padStart(2, '0');
   .strip--rule .strip__item:first-child .strip__idx { color: var(--olive); }
 
   .strip--rule .strip__title { font-size: var(--fs-body); }
+
+  @media (max-width: 1023px) {
+    .strip--rule {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px 20px;
+    }
+  }
+
+  @media (max-width: 560px) {
+    .strip--rule { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  /* «Масштабирование» не помещается в половину узкого экрана. */
+  @media (max-width: 400px) {
+    .strip--rule { grid-template-columns: minmax(0, 1fr); }
+  }
 
   /* ---- Вариант bar ----------------------------------------------------- */
   .strip--bar { gap: 4px; align-items: stretch; }
@@ -94,4 +113,15 @@ const pad = (n: number) => String(n).padStart(2, '0');
   .strip--bar .strip__item.is-active .strip__idx { color: var(--ink); }
 
   .strip--bar .strip__title { font-size: var(--fs-body-sm); }
+
+  @media (max-width: 1279px) {
+    .strip--bar {
+      grid-template-columns: repeat(4, 1fr);
+      gap: 28px 4px;
+    }
+  }
+
+  @media (max-width: 767px) {
+    .strip--bar { grid-template-columns: repeat(2, 1fr); }
+  }
 </style>

@@ -43,4 +43,19 @@ import { footerNav, footer } from '~/data/content';
     letter-spacing: 0.1em;
     color: var(--mute);
   }
+
+  @media (max-width: 767px) {
+    .footer__inner {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 24px;
+    }
+  }
+
+  @media (max-width: 479px) {
+    .footer__inner :global(.nav) {
+      flex-wrap: wrap;
+      gap: 16px 22px;
+    }
+  }
 </style>
