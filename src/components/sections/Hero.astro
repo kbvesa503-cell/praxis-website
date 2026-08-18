@@ -5,7 +5,7 @@
 import Section from '~/components/ui/Section.astro';
 import SectionLabel from '~/components/ui/SectionLabel.astro';
 import SectionHeading from '~/components/ui/SectionHeading.astro';
-import Button from '~/components/ui/Button.astro';
+import CtaButton from '~/components/ui/CtaButton.astro';
 import QuietLink from '~/components/ui/QuietLink.astro';
 import Legend from '~/components/ui/Legend.astro';
 import HeroDiagram from '~/components/hero/HeroDiagram.astro';
@@ -33,7 +33,7 @@ import { hero } from '~/data/content';
       <p class="hero__lead">{hero.lead}</p>
 
       <div class="hero__actions">
-        <Button data-cta="hero">{hero.cta}</Button>
+        <CtaButton>{hero.cta}</CtaButton>
         <QuietLink href="#economics">{hero.secondaryCta}</QuietLink>
       </div>
     </div>

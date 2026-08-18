@@ -4,7 +4,7 @@ import Section from '~/components/ui/Section.astro';
 import SectionLabel from '~/components/ui/SectionLabel.astro';
 import SectionHeading from '~/components/ui/SectionHeading.astro';
 import IndexedList from '~/components/ui/IndexedList.astro';
-import Button from '~/components/ui/Button.astro';
+import CtaButton from '~/components/ui/CtaButton.astro';
 import { firstStep } from '~/data/content';
 ---
 
@@ -15,7 +15,7 @@ import { firstStep } from '~/data/content';
       <SectionHeading size="h2-lg" id="first-step-heading">{firstStep.heading}</SectionHeading>
       <p class="fstep__lead">{firstStep.lead}</p>
       <div class="fstep__action">
-        <Button data-cta="first-step">{firstStep.cta}</Button>
+        <CtaButton>{firstStep.cta}</CtaButton>
       </div>
     </div>
 

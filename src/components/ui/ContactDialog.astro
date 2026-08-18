@@ -1,0 +1,190 @@
+---
+/*
+ * Форма заявки. Нативный <dialog>: фокус-ловушка, Esc и подложка
+ * достаются от браузера, без библиотек и без своего менеджера фокуса.
+ *
+ * В утверждённом концепте формы нет — она не добавляет секцию на
+ * страницу и не меняет её композицию. Оформление собрано из тех же
+ * элементов системы: волосяные линии, mono-метки, пилюля действия.
+ * Ни карточек, ни теней, ни скруглённых полей.
+ */
+import SectionLabel from './SectionLabel.astro';
+import SectionHeading from './SectionHeading.astro';
+import Button from './Button.astro';
+import { contactForm } from '~/data/content';
+
+const f = contactForm.fields;
+---
+
+<dialog class="cdlg" id="contact-dialog" aria-labelledby="cdlg-heading">
+  <form class="cdlg__panel" method="dialog" data-contact-form novalidate>
+    <button type="button" class="cdlg__close" data-close-contact>
+      {contactForm.close}
+    </button>
+
+    <div class="cdlg__head">
+      <SectionLabel tone="olive">{contactForm.label}</SectionLabel>
+      <SectionHeading size="h2" id="cdlg-heading" class="cdlg__heading">
+        {contactForm.heading}
+      </SectionHeading>
+      <p class="cdlg__lead">{contactForm.lead}</p>
+    </div>
+
+    <div class="cdlg__fields">
+      <label class="cdlg__field">
+        <span class="cdlg__label">{f.name}</span>
+        <input class="cdlg__input" name="name" type="text" autocomplete="name" required />
+      </label>
+
+      <label class="cdlg__field">
+        <span class="cdlg__label">{f.company}</span>
+        <input class="cdlg__input" name="company" type="text" autocomplete="organization" />
+      </label>
+
+      <label class="cdlg__field">
+        <span class="cdlg__label">{f.contact}</span>
+        <input class="cdlg__input" name="contact" type="text" autocomplete="email" required />
+      </label>
+
+      <label class="cdlg__field">
+        <span class="cdlg__label">{f.process}</span>
+        <textarea class="cdlg__input cdlg__input--area" name="process" rows="3"></textarea>
+      </label>
+    </div>
+
+    {/* Ловушка для ботов: поле скрыто от людей и от скринридеров. */}
+    <div class="cdlg__trap" aria-hidden="true">
+      <label>
+        Не заполняйте это поле
+        <input type="text" name="company_website" tabindex="-1" autocomplete="off" />
+      </label>
+    </div>
+
+    <div class="cdlg__foot">
+      <Button type="submit" data-contact-submit>{contactForm.submit}</Button>
+      <p class="cdlg__status" role="status" aria-live="polite" data-contact-status></p>
+    </div>
+  </form>
+</dialog>
+
+<style>
+  .cdlg {
+    width: min(520px, calc(100vw - 32px));
+    max-height: calc(100dvh - 32px);
+    padding: 0;
+    border: var(--rule) solid var(--ink);
+    background: var(--paper);
+    color: var(--ink);
+  }
+
+  .cdlg::backdrop {
+    background: rgb(0 0 0 / 0.6);
+  }
+
+  .cdlg__panel {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+    padding: clamp(28px, 4vw, 44px);
+  }
+
+  .cdlg__close {
+    position: absolute;
+    top: 18px;
+    right: 20px;
+    font-family: var(--font-mono);
+    font-size: var(--fs-label);
+    letter-spacing: var(--ls-label);
+    text-transform: uppercase;
+    color: var(--mute);
+    transition: color var(--dur-fast) var(--ease);
+  }
+
+  .cdlg__close:hover { color: var(--ink); }
+
+  .cdlg__head {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .cdlg__heading { font-size: var(--fs-h2-lg); }
+
+  .cdlg__lead {
+    font-size: var(--fs-body-sm);
+    line-height: var(--lh-text);
+    color: var(--text-quiet);
+  }
+
+  .cdlg__fields {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .cdlg__field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    border-top: var(--rule) solid var(--line);
+    padding: 16px 0;
+  }
+
+  .cdlg__field:first-child { border-top-color: var(--line-strong); }
+  .cdlg__field:last-child { border-bottom: var(--rule) solid var(--line); }
+
+  .cdlg__label {
+    font-family: var(--font-mono);
+    font-size: var(--fs-label);
+    letter-spacing: var(--ls-label);
+    text-transform: uppercase;
+    color: var(--mute);
+  }
+
+  .cdlg__input {
+    width: 100%;
+    font-size: var(--fs-body-sm);
+    line-height: var(--lh-ui);
+    color: var(--ink);
+    padding: 2px 0;
+  }
+
+  .cdlg__input--area {
+    resize: vertical;
+    min-height: 66px;
+  }
+
+  .cdlg__field:has(.cdlg__input:user-invalid) .cdlg__label { color: var(--olive); }
+
+  .cdlg__trap {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+
+  .cdlg__foot {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+
+  .cdlg__status {
+    font-size: var(--fs-caption);
+    line-height: var(--lh-ui);
+    color: var(--text-quiet);
+  }
+
+  .cdlg__status:empty { display: none; }
+
+  .cdlg[data-state='error'] .cdlg__status { color: var(--olive); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cdlg__close { transition: none; }
+  }
+</style>
+
+<script>
+  import '~/scripts/contact.ts';
+</script>

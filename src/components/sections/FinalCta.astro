@@ -3,7 +3,7 @@
 import Section from '~/components/ui/Section.astro';
 import SectionLabel from '~/components/ui/SectionLabel.astro';
 import SectionHeading from '~/components/ui/SectionHeading.astro';
-import Button from '~/components/ui/Button.astro';
+import CtaButton from '~/components/ui/CtaButton.astro';
 import { finalCta } from '~/data/content';
 ---
 
@@ -13,7 +13,7 @@ import { finalCta } from '~/data/content';
     <SectionHeading size="h2-cta" tone="paper" id="cta-heading" measure={780}>
       {finalCta.heading}
     </SectionHeading>
-    <Button variant="onDark" data-cta="final">{finalCta.cta}</Button>
+    <CtaButton variant="onDark" fallbackHref="#first-step">{finalCta.cta}</CtaButton>
   </div>
 </Section>
 

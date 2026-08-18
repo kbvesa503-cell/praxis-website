@@ -1,0 +1,37 @@
+---
+/*
+ * Кнопка призыва к действию. Пока адрес приёма заявок не задан,
+ * кнопка работает как якорь на финальную секцию — на сайт не попадает
+ * форма, которая никуда не отправляет. Как только адрес появится
+ * в src/data/config.ts, все кнопки начинают открывать форму.
+ */
+import Button from './Button.astro';
+import { isContactEnabled } from '~/data/config';
+
+interface Props {
+  variant?: 'onLight' | 'onDark';
+  size?: 'sm' | 'md';
+  /** Куда вести, пока форма не подключена. */
+  fallbackHref?: string;
+  class?: string;
+}
+
+const {
+  variant = 'onLight',
+  size = 'md',
+  fallbackHref = '#contact',
+  class: className,
+} = Astro.props;
+---
+
+{
+  isContactEnabled ? (
+    <Button variant={variant} size={size} class={className} data-open-contact>
+      <slot />
+    </Button>
+  ) : (
+    <Button variant={variant} size={size} class={className} href={fallbackHref}>
+      <slot />
+    </Button>
+  )
+}

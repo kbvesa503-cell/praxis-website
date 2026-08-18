@@ -16,6 +16,9 @@ import FirstStep from '~/components/sections/FirstStep.astro';
 import Cases from '~/components/sections/Cases.astro';
 import FinalCta from '~/components/sections/FinalCta.astro';
 import Footer from '~/components/sections/Footer.astro';
+
+import ContactDialog from '~/components/ui/ContactDialog.astro';
+import { isContactEnabled } from '~/data/config';
 ---
 
 <Base>
@@ -36,4 +39,6 @@ import Footer from '~/components/sections/Footer.astro';
   </main>
 
   <Footer />
+
+  {isContactEnabled && <ContactDialog />}
 </Base>

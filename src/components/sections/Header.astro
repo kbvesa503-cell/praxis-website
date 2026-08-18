@@ -6,7 +6,7 @@
  */
 import Lockup from '~/components/brand/Lockup.astro';
 import Nav from '~/components/ui/Nav.astro';
-import Button from '~/components/ui/Button.astro';
+import CtaButton from '~/components/ui/CtaButton.astro';
 import { nav, hero } from '~/data/content';
 ---
 
@@ -18,7 +18,7 @@ import { nav, hero } from '~/data/content';
 
     <nav class="header__nav" aria-label="Основная навигация">
       <Nav links={nav} />
-      <Button size="sm" data-cta="header">{hero.cta}</Button>
+      <CtaButton size="sm">{hero.cta}</CtaButton>
     </nav>
   </div>
 </header>
