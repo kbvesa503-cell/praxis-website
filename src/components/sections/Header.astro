@@ -25,8 +25,20 @@ import { nav, hero } from '~/data/content';
 
 <style>
   .header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
     border-bottom: var(--rule) solid var(--line);
     background: var(--paper);
+    transition: transform var(--dur) var(--ease);
+  }
+
+  /* Уезжает при прокрутке вперёд, возвращается при движении вверх.
+     Ни тени, ни размытия, ни сжатия — шапка просто есть или её нет. */
+  .header.is-hidden { transform: translateY(-100%); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .header { transition: none; }
   }
 
   .header__inner {

@@ -14,14 +14,14 @@ import { cases } from '~/data/content';
 
 <Section id="cases" labelledby="cases-heading">
   <div class="cases">
-    <div class="cases__head">
+    <div class="cases__head" data-reveal>
       <SectionLabel>{cases.label}</SectionLabel>
       <SectionHeading size="h2" id="cases-heading">{cases.heading}</SectionHeading>
     </div>
 
-    <MetricRow metrics={cases.placeholder} variant="dashed" />
+    <MetricRow metrics={cases.placeholder} variant="dashed" data-reveal style="--reveal-i:1" />
 
-    <Disclaimer rule={false}>{cases.note}</Disclaimer>
+    <Disclaimer rule={false} data-reveal style="--reveal-i:2">{cases.note}</Disclaimer>
   </div>
 </Section>
 

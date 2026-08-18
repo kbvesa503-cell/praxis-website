@@ -9,12 +9,18 @@ import { howItWorks } from '~/data/content';
 
 <Section id="how" tone="sand" labelledby="how-heading">
   <div class="how">
-    <div class="how__head">
+    <div class="how__head" data-reveal>
       <SectionLabel tone="olive">{howItWorks.label}</SectionLabel>
       <SectionHeading size="h2" id="how-heading">{howItWorks.heading}</SectionHeading>
     </div>
 
-    <StepStrip steps={howItWorks.steps} variant="bar" active={howItWorks.activeStep} />
+    <StepStrip
+      steps={howItWorks.steps}
+      variant="bar"
+      active={howItWorks.activeStep}
+      data-reveal
+      style="--reveal-i:1"
+    />
   </div>
 </Section>
 

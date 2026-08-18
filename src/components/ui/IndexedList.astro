@@ -12,13 +12,14 @@ interface Props {
   start?: number;
   size?: 'md' | 'sm';
   class?: string;
+  [key: string]: unknown;
 }
 
-const { items, start = 1, size = 'md', class: className } = Astro.props;
+const { items, start = 1, size = 'md', class: className, ...rest } = Astro.props;
 const pad = (n: number) => String(n).padStart(2, '0');
 ---
 
-<ol start={start} class:list={['ilist', `ilist--${size}`, className]}>
+<ol start={start} class:list={['ilist', `ilist--${size}`, className]} {...rest}>
   {
     items.map((item, i) => (
       <li class="ilist__row">

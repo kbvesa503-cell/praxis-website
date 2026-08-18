@@ -10,14 +10,16 @@ interface Props {
   metrics: readonly MetricItem[];
   variant?: 'solid' | 'dashed';
   class?: string;
+  [key: string]: unknown;
 }
 
-const { metrics, variant = 'solid', class: className } = Astro.props;
+const { metrics, variant = 'solid', class: className, ...rest } = Astro.props;
 ---
 
 <dl
   class:list={['metrics', `metrics--${variant}`, className]}
   style={`--metrics-cols:${metrics.length}`}
+  {...rest}
 >
   {
     metrics.map((m) => (

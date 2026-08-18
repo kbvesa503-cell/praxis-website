@@ -13,13 +13,13 @@ const right = processScope.items.slice(4);
 
 <Section id="processes" labelledby="processes-heading">
   <div class="split">
-    <div class="split__aside">
+    <div class="split__aside" data-reveal>
       <SectionLabel>{processScope.label}</SectionLabel>
       <SectionHeading size="h2-lg" id="processes-heading">{processScope.heading}</SectionHeading>
       <p class="split__lead">{processScope.lead}</p>
     </div>
 
-    <div class="split__columns">
+    <div class="split__columns" data-reveal style="--reveal-i:1">
       <IndexedList items={left} start={1} size="md" />
       <IndexedList items={right} start={5} size="md" />
     </div>

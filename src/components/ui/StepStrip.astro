@@ -10,15 +10,17 @@ interface Props {
   /** Номер выделенного шага (для варианта bar). */
   active?: number;
   class?: string;
+  [key: string]: unknown;
 }
 
-const { steps, variant = 'rule', active, class: className } = Astro.props;
+const { steps, variant = 'rule', active, class: className, ...rest } = Astro.props;
 const pad = (n: number) => String(n).padStart(2, '0');
 ---
 
 <ol
   class:list={['strip', `strip--${variant}`, className]}
   style={`--strip-cols:${steps.length}`}
+  {...rest}
 >
   {
     steps.map((step, i) => (

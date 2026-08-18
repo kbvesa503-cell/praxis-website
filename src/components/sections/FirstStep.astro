@@ -10,7 +10,7 @@ import { firstStep } from '~/data/content';
 
 <Section id="first-step" pb="110px" labelledby="first-step-heading">
   <div class="fstep">
-    <div class="fstep__aside">
+    <div class="fstep__aside" data-reveal>
       <SectionLabel>{firstStep.label}</SectionLabel>
       <SectionHeading size="h2-lg" id="first-step-heading">{firstStep.heading}</SectionHeading>
       <p class="fstep__lead">{firstStep.lead}</p>
@@ -19,7 +19,7 @@ import { firstStep } from '~/data/content';
       </div>
     </div>
 
-    <IndexedList items={firstStep.items} size="sm" />
+    <IndexedList items={firstStep.items} size="sm" data-reveal style="--reveal-i:1" />
   </div>
 </Section>
 

@@ -5,12 +5,13 @@
 interface Props {
   rule?: boolean;
   class?: string;
+  [key: string]: unknown;
 }
 
-const { rule = true, class: className } = Astro.props;
+const { rule = true, class: className, ...rest } = Astro.props;
 ---
 
-<p class:list={['disclaimer', rule && 'disclaimer--rule', className]}>
+<p class:list={['disclaimer', rule && 'disclaimer--rule', className]} {...rest}>
   <slot />
 </p>
 

@@ -6,6 +6,7 @@ import '~/styles/reset.css';
 import '~/styles/tokens.css';
 import '~/styles/fonts.css';
 import '~/styles/base.css';
+import '~/styles/motion.css';
 
 import { site } from '~/data/content';
 
@@ -66,10 +67,28 @@ const orgJsonLd = {
     />
 
     <script type="application/ld+json" set:html={JSON.stringify(orgJsonLd)} is:inline />
+
+    {/* Включаем начальные состояния анимации до первой отрисовки, иначе
+        блоки успеют мигнуть. Если модуль движения не поднялся за 2.5 с,
+        класс снимается и страница остаётся полностью видимой. */}
+    <script is:inline>
+      (function () {
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        var root = document.documentElement;
+        root.classList.add('motion');
+        setTimeout(function () {
+          if (!window.__praxisMotion) root.classList.remove('motion');
+        }, 2500);
+      })();
+    </script>
   </head>
 
   <body>
     <a class="skip-link" href="#main">К основному содержанию</a>
     <slot />
+
+    <script>
+      import '~/scripts/motion.ts';
+    </script>
   </body>
 </html>

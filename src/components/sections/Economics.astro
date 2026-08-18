@@ -14,14 +14,14 @@ import { economics } from '~/data/content';
 
 <Section id="economics" labelledby="economics-heading">
   <div class="econ">
-    <div class="econ__head">
+    <div class="econ__head" data-reveal>
       <SectionLabel>{economics.label}</SectionLabel>
       <SectionHeading size="h2" id="economics-heading">{economics.heading}</SectionHeading>
     </div>
 
-    <MetricRow metrics={economics.metrics} variant="solid" />
+    <MetricRow metrics={economics.metrics} variant="solid" data-reveal style="--reveal-i:1" />
 
-    <Disclaimer>{economics.disclaimer}</Disclaimer>
+    <Disclaimer data-reveal style="--reveal-i:2">{economics.disclaimer}</Disclaimer>
   </div>
 </Section>
 

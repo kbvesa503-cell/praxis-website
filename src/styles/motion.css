@@ -1,0 +1,148 @@
+/*
+ * Слой движения.
+ *
+ * Принцип: страница полностью работоспособна и видима без JavaScript.
+ * Начальные «скрытые» состояния включаются только классом .motion,
+ * который ставит встроенный скрипт в <head> — и только если пользователь
+ * не просил уменьшить количество анимации. Если модуль движения по любой
+ * причине не загрузился, .motion снимается по таймауту и контент
+ * остаётся на месте.
+ *
+ * Ни один эффект здесь не двигает вёрстку: анимируются только opacity,
+ * transform, clip-path и stroke-dashoffset.
+ */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ---- Проявление блоков при прокрутке ---------------------------------- */
+
+.motion [data-reveal] {
+  opacity: 0;
+  transform: translateY(12px);
+}
+
+.motion [data-reveal].is-in {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity var(--dur-slow) var(--ease),
+    transform var(--dur-slow) var(--ease);
+  transition-delay: calc(var(--reveal-i, 0) * 90ms);
+}
+
+/* ---- Схема первого экрана --------------------------------------------- */
+/*
+ * Три такта: текущая схема → точка изменения → новая логика процесса.
+ * Один прогон, без повторов. Геометрия не меняется — только видимость,
+ * длина штриха и раскрытие областей.
+ */
+
+.motion .hd--anim .hd__label--before,
+.motion .hd--anim .hd__label--pivot,
+.motion .hd--anim .hd__label--after,
+.motion .hd--anim .hd__nodes rect,
+.motion .hd--anim .hd__after-nodes rect { opacity: 0; }
+
+/* pathLength="1" нормализует длину контура, поэтому штрих задаётся
+   единицей независимо от реальной геометрии пути. */
+.motion .hd--anim .hd__edge,
+.motion .hd--anim .hd__baseline {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+}
+
+.motion .hd--anim .hd__pivot-lines { clip-path: inset(0 0 100% 0); }
+.motion .hd--anim .hd__band { clip-path: inset(0 100% 0 0); }
+
+.motion .hd--anim .hd__pivot {
+  transform: scale(0);
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+/* Такт 1 — как процесс работает сейчас */
+
+.motion .hd--anim.is-playing .hd__label--before {
+  opacity: 1;
+  transition: opacity 400ms var(--ease) 60ms;
+}
+
+.motion .hd--anim.is-playing .hd__nodes rect {
+  opacity: 1;
+  transition: opacity 320ms var(--ease);
+}
+
+.motion .hd--anim.is-playing .hd__nodes rect:nth-child(1) { transition-delay: 0ms; }
+.motion .hd--anim.is-playing .hd__nodes rect:nth-child(2) { transition-delay: 60ms; }
+.motion .hd--anim.is-playing .hd__nodes rect:nth-child(3) { transition-delay: 120ms; }
+.motion .hd--anim.is-playing .hd__nodes rect:nth-child(4) { transition-delay: 180ms; }
+.motion .hd--anim.is-playing .hd__nodes rect:nth-child(5) { transition-delay: 240ms; }
+.motion .hd--anim.is-playing .hd__nodes rect:nth-child(6) { transition-delay: 300ms; }
+
+/* Седьмой узел — тот, к которому процесс возвращается.
+   Появляется вместе с возвратными связями, а не в общей очереди. */
+.motion .hd--anim.is-playing .hd__nodes rect:nth-child(7) { transition-delay: 820ms; }
+
+.motion .hd--anim.is-playing .hd__edge--main {
+  stroke-dashoffset: 0;
+  transition: stroke-dashoffset 760ms var(--ease) 120ms;
+}
+
+/* Возвраты дорисовываются последними и медленнее: это крюк в процессе. */
+.motion .hd--anim.is-playing .hd__edge--return {
+  stroke-dashoffset: 0;
+  transition: stroke-dashoffset 520ms var(--ease) 780ms;
+}
+
+/* Такт 2 — точка изменения */
+
+.motion .hd--anim.is-playing .hd__pivot-lines {
+  clip-path: inset(0);
+  transition: clip-path 520ms var(--ease) 1020ms;
+}
+
+.motion .hd--anim.is-playing .hd__pivot {
+  transform: scale(1);
+  transition: transform 420ms var(--ease) 1240ms;
+}
+
+.motion .hd--anim.is-playing .hd__label--pivot {
+  opacity: 1;
+  transition: opacity 380ms var(--ease) 1420ms;
+}
+
+/* Такт 3 — перестроенный процесс */
+
+.motion .hd--anim.is-playing .hd__band {
+  clip-path: inset(0);
+  transition: clip-path 700ms var(--ease) 1560ms;
+}
+
+.motion .hd--anim.is-playing .hd__baseline {
+  stroke-dashoffset: 0;
+  transition: stroke-dashoffset 640ms var(--ease) 1700ms;
+}
+
+.motion .hd--anim.is-playing .hd__after-nodes rect {
+  opacity: 1;
+  transition: opacity 300ms var(--ease);
+}
+
+.motion .hd--anim.is-playing .hd__after-nodes rect:nth-child(1) { transition-delay: 1880ms; }
+.motion .hd--anim.is-playing .hd__after-nodes rect:nth-child(2) { transition-delay: 2010ms; }
+.motion .hd--anim.is-playing .hd__after-nodes rect:nth-child(3) { transition-delay: 2140ms; }
+.motion .hd--anim.is-playing .hd__after-nodes rect:nth-child(4) { transition-delay: 2270ms; }
+
+.motion .hd--anim.is-playing .hd__label--after {
+  opacity: 1;
+  transition: opacity 400ms var(--ease) 2320ms;
+}

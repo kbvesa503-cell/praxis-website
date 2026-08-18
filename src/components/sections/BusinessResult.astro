@@ -9,13 +9,13 @@ import { businessResult } from '~/data/content';
 
 <Section id="result" labelledby="result-heading">
   <div class="split">
-    <div class="split__aside">
+    <div class="split__aside" data-reveal>
       <SectionLabel>{businessResult.label}</SectionLabel>
       <SectionHeading size="h2-lg" id="result-heading">{businessResult.heading}</SectionHeading>
       <p class="split__lead">{businessResult.lead}</p>
     </div>
 
-    <ResultList items={businessResult.items} />
+    <ResultList items={businessResult.items} data-reveal style="--reveal-i:1" />
   </div>
 </Section>
 

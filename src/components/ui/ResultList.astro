@@ -9,13 +9,14 @@ import type { IndexedItem } from '~/data/content';
 interface Props {
   items: IndexedItem[];
   class?: string;
+  [key: string]: unknown;
 }
 
-const { items, class: className } = Astro.props;
+const { items, class: className, ...rest } = Astro.props;
 const pad = (n: number) => String(n).padStart(2, '0');
 ---
 
-<ol class:list={['rlist', className]}>
+<ol class:list={['rlist', className]} {...rest}>
   {
     items.map((item, i) => (
       <li class="rlist__row">
