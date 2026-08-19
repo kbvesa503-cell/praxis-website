@@ -2,7 +2,7 @@
 /*
  * Нумерованный список с mono-индексом — основной повторяемый паттерн макета.
  * Первая строка колонки выделена: чёрная линия и оливковый индекс,
- * остальные строки идут серым. Используется в секциях 04 и 05.
+ * остальные строки идут серым. Используется в секциях 04, 05 и 06.
  */
 import type { IndexedItem } from '~/data/content';
 
@@ -11,15 +11,38 @@ interface Props {
   /** Номер, с которого начинается сквозная нумерация колонки. */
   start?: number;
   size?: 'md' | 'sm';
+  /** Ведущая колонка: первая строка идёт на ступень крупнее остальных. */
+  lead?: boolean;
+  /** Сдвиг вниз относительно соседней колонки. Снимается на планшете. */
+  offset?: boolean;
   class?: string;
   [key: string]: unknown;
 }
 
-const { items, start = 1, size = 'md', class: className, ...rest } = Astro.props;
+const {
+  items,
+  start = 1,
+  size = 'md',
+  lead = false,
+  offset = false,
+  class: className,
+  ...rest
+} = Astro.props;
+
 const pad = (n: number) => String(n).padStart(2, '0');
 ---
 
-<ol start={start} class:list={['ilist', `ilist--${size}`, className]} {...rest}>
+<ol
+  start={start}
+  class:list={[
+    'ilist',
+    `ilist--${size}`,
+    lead && 'ilist--lead',
+    offset && 'ilist--offset',
+    className,
+  ]}
+  {...rest}
+>
   {
     items.map((item, i) => (
       <li class="ilist__row">
@@ -40,8 +63,8 @@ const pad = (n: number) => String(n).padStart(2, '0');
     display: flex;
     align-items: baseline;
     border-top: var(--rule) solid var(--line);
-    padding-block: 20px;
-    transition: none;
+    padding-block: 17px;
+    transition: border-color var(--dur-fast) var(--ease);
   }
 
   .ilist__row:first-child { border-top-color: var(--line-strong); }
@@ -52,13 +75,16 @@ const pad = (n: number) => String(n).padStart(2, '0');
     font-family: var(--font-mono);
     font-size: var(--fs-label-md);
     line-height: var(--lh-ui);
-    color: var(--mute);
+    color: var(--text-label);
     transition: color var(--dur-fast) var(--ease);
   }
 
   .ilist__row:first-child .ilist__idx { color: var(--olive); }
 
-  .ilist__title { line-height: var(--lh-ui); }
+  .ilist__title {
+    line-height: var(--lh-ui);
+    transition: color var(--dur-fast) var(--ease);
+  }
 
   .ilist--md .ilist__row { gap: 16px; }
   .ilist--md .ilist__title { font-size: var(--fs-lead); }
@@ -66,7 +92,29 @@ const pad = (n: number) => String(n).padStart(2, '0');
   .ilist--sm .ilist__row { gap: 18px; }
   .ilist--sm .ilist__title { font-size: var(--fs-body); }
 
+  /* Ведущая колонка задаёт масштаб: первая строка крупнее и просторнее,
+     как первый пункт в списке результатов. Без этого две одинаковые
+     колонки читаются как таблица. */
+  .ilist--lead .ilist__row:first-child { padding-block: 22px 20px; }
+  .ilist--lead.ilist--md .ilist__row:first-child .ilist__title { font-size: 22px; }
+  .ilist--lead.ilist--sm .ilist__row:first-child .ilist__title { font-size: 19px; }
+
+  .ilist--offset { margin-top: 34px; }
+
+  /* Строка отзывается на курсор: линия темнеет, индекс уходит в оливу.
+     Ни фона, ни сдвига — список остаётся списком. */
+  @media (hover: hover) {
+    .ilist__row:hover { border-top-color: var(--line-strong); }
+    .ilist__row:hover .ilist__idx { color: var(--olive); }
+  }
+
+  @media (max-width: 1023px) {
+    .ilist--offset { margin-top: 0; }
+  }
+
   @media (prefers-reduced-motion: reduce) {
-    .ilist__idx { transition: none; }
+    .ilist__row,
+    .ilist__idx,
+    .ilist__title { transition: none; }
   }
 </style>

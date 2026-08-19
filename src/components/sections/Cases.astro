@@ -1,41 +1,133 @@
 ---
 /*
  * Секция 06 — доказательства результата.
- * Осознанно пустой каркас: кейсы появятся здесь с цифрами клиентов
- * после завершения первых пилотов. Придуманных примеров тут нет и не будет.
+ *
+ * Раньше здесь стоял пустой каркас. Теперь — первый реализованный кейс,
+ * разобранный в той же логике, в какой PRAXIS разбирает процесс клиента:
+ * было → сделали → стало → эффект, и отдельно сам конвейер по этапам.
+ *
+ * Цифры помечены как предварительные в трёх местах сразу — меткой ряда,
+ * знаком «≈» у значений и оговоркой под блоком. Кейс работает как
+ * доказательство подхода, но не выдаёт ориентиры за замеры.
  */
 import Section from '~/components/ui/Section.astro';
 import SectionLabel from '~/components/ui/SectionLabel.astro';
 import SectionHeading from '~/components/ui/SectionHeading.astro';
+import StepStrip from '~/components/ui/StepStrip.astro';
+import CaseColumns from '~/components/ui/CaseColumns.astro';
 import MetricRow from '~/components/ui/MetricRow.astro';
 import Disclaimer from '~/components/ui/Disclaimer.astro';
 import { cases } from '~/data/content';
 ---
 
-<Section id="cases" labelledby="cases-heading">
-  <div class="cases">
-    <div class="cases__head" data-reveal>
-      <SectionLabel>{cases.label}</SectionLabel>
-      <SectionHeading size="h2" id="cases-heading">{cases.heading}</SectionHeading>
+<Section id="cases" density="tight" labelledby="cases-heading">
+  <div class="case">
+    {/* Заголовок и подводка стоят в разных колонках неравной ширины:
+        секция начинается не с той же сетки, что предыдущие. */}
+    <div class="case__head" data-reveal>
+      <div class="case__title">
+        <SectionLabel>{cases.label}</SectionLabel>
+        <SectionHeading size="h2" id="cases-heading">{cases.heading}</SectionHeading>
+      </div>
+
+      <div class="case__intro">
+        <span class="case__badge">{cases.badge}</span>
+        <p class="case__lead">{cases.lead}</p>
+      </div>
     </div>
 
-    <MetricRow metrics={cases.placeholder} variant="dashed" data-reveal style="--reveal-i:1" />
+    <div class="case__pipeline" data-reveal style="--reveal-i:1">
+      <SectionLabel>{cases.pipelineLabel}</SectionLabel>
+      <StepStrip
+        steps={cases.pipeline}
+        variant="rule"
+        data-reveal
+        data-reveal-rows
+        style="--reveal-i:1"
+      />
+    </div>
 
-    <Disclaimer rule={false} data-reveal style="--reveal-i:2">{cases.note}</Disclaimer>
+    <CaseColumns
+      columns={cases.narrative}
+      data-reveal
+      data-reveal-rows
+      style="--reveal-i:1"
+    />
+
+    <div class="case__numbers" data-reveal style="--reveal-i:1">
+      <SectionLabel tone="olive">{cases.metricsLabel}</SectionLabel>
+      <MetricRow metrics={cases.metrics} data-reveal data-reveal-rows />
+    </div>
+
+    <Disclaimer data-reveal style="--reveal-i:2">{cases.note}</Disclaimer>
   </div>
 </Section>
 
 <style>
-  .cases {
+  .case {
     display: flex;
     flex-direction: column;
-    gap: 40px;
+    gap: 38px;
   }
 
-  .cases__head {
+  .case__head {
+    display: grid;
+    grid-template-columns: 1.15fr 0.85fr;
+    gap: 60px;
+    align-items: end;
+  }
+
+  .case__title {
     display: flex;
     flex-direction: column;
     gap: 18px;
-    max-width: 640px;
+  }
+
+  .case__intro {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    max-width: 420px;
+  }
+
+  /* Метка статуса кейса: та же mono-строка, но обведённая —
+     чтобы «реализован» читалось как отметка, а не как ещё один заголовок. */
+  .case__badge {
+    align-self: flex-start;
+    font-family: var(--font-mono);
+    font-size: var(--fs-label);
+    line-height: var(--lh-ui);
+    letter-spacing: var(--ls-label-mid);
+    text-transform: uppercase;
+    color: var(--olive);
+    border: var(--rule) solid var(--olive);
+    padding: 7px 12px;
+  }
+
+  .case__lead {
+    font-size: var(--fs-body-sm);
+    line-height: var(--lh-text);
+    color: var(--text-quiet);
+  }
+
+  .case__pipeline,
+  .case__numbers {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  @media (max-width: 1023px) {
+    .case {
+      gap: 36px;
+    }
+
+    .case__head {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 28px;
+      align-items: start;
+    }
+
+    .case__intro { max-width: 560px; }
   }
 </style>

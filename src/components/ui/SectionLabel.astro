@@ -2,16 +2,20 @@
 /*
  * Служебная метка секции: IBM Plex Mono, капитель, широкий трекинг.
  * Встречается в макете восемь раз.
+ *
+ * Тон по умолчанию — meta, а не mute: метка секции несёт номер и тему
+ * раздела, её читают. Тон mute оставлен для меток, которые ничего
+ * не значат в отрыве от соседнего элемента.
  */
 interface Props {
-  tone?: 'mute' | 'olive' | 'sand' | 'ink';
+  tone?: 'meta' | 'mute' | 'olive' | 'sand' | 'ink';
   size?: 'sm' | 'md';
   as?: 'span' | 'h2' | 'p';
   id?: string;
   class?: string;
 }
 
-const { tone = 'mute', size = 'sm', as: Tag = 'span', id, class: className }: Props =
+const { tone = 'meta', size = 'sm', as: Tag = 'span', id, class: className }: Props =
   Astro.props;
 ---
 
@@ -32,7 +36,8 @@ const { tone = 'mute', size = 'sm', as: Tag = 'span', id, class: className }: Pr
   .label--sm { font-size: var(--fs-label); }
   .label--md { font-size: var(--fs-label-lg); }
 
-  .label--mute { color: var(--mute); }
+  .label--meta { color: var(--text-meta); }
+  .label--mute { color: var(--text-label); }
   .label--olive { color: var(--olive); }
   .label--sand { color: var(--sand); }
   .label--ink { color: var(--ink); }

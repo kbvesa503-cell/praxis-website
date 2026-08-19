@@ -1,5 +1,11 @@
 ---
-/* Секция 05 — первый шаг: один процесс или отдел, а не вся компания. */
+/*
+ * Секция 05 — первый шаг: один процесс или отдел, а не вся компания.
+ *
+ * Сетка намеренно неравная и со сдвигом по вертикали: список начинается
+ * ниже заголовка, а не вровень с ним. После плотных секций 03–04 это
+ * возвращает странице движение, не добавляя ни одного лишнего элемента.
+ */
 import Section from '~/components/ui/Section.astro';
 import SectionLabel from '~/components/ui/SectionLabel.astro';
 import SectionHeading from '~/components/ui/SectionHeading.astro';
@@ -8,7 +14,7 @@ import CtaButton from '~/components/ui/CtaButton.astro';
 import { firstStep } from '~/data/content';
 ---
 
-<Section id="first-step" pb="110px" labelledby="first-step-heading">
+<Section id="first-step" density="tight" pb="86px" labelledby="first-step-heading">
   <div class="fstep">
     <div class="fstep__aside" data-reveal>
       <SectionLabel>{firstStep.label}</SectionLabel>
@@ -19,15 +25,24 @@ import { firstStep } from '~/data/content';
       </div>
     </div>
 
-    <IndexedList items={firstStep.items} size="sm" data-reveal style="--reveal-i:1" />
+    <IndexedList
+      items={firstStep.items}
+      size="sm"
+      lead
+      offset
+      data-reveal
+      data-reveal-rows
+      style="--reveal-i:1"
+    />
   </div>
 </Section>
 
 <style>
   .fstep {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 72px;
+    grid-template-columns: 0.82fr 1fr;
+    gap: 56px;
+    align-items: start;
   }
 
   .fstep__aside {
@@ -37,10 +52,10 @@ import { firstStep } from '~/data/content';
   }
 
   .fstep__lead {
-    max-width: 420px;
+    max-width: 400px;
     font-size: var(--fs-body-sm);
     line-height: var(--lh-text);
-    color: var(--olive);
+    color: var(--text-quiet);
   }
 
   .fstep__action { margin-top: 12px; }
@@ -48,7 +63,7 @@ import { firstStep } from '~/data/content';
   @media (max-width: 1023px) {
     .fstep {
       grid-template-columns: minmax(0, 1fr);
-      gap: 40px;
+      gap: 36px;
     }
 
     .fstep__lead { max-width: 560px; }

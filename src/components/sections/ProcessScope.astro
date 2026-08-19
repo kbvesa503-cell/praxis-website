@@ -1,5 +1,12 @@
 ---
-/* Секция 04 — какие процессы имеет смысл пересматривать. */
+/*
+ * Секция 04 — какие процессы имеет смысл пересматривать.
+ *
+ * Ритм секции пересобран: сетка неравная (аside уже, список шире),
+ * колонки списка тоже разной ширины, а сам аside на десктопе стоит
+ * на месте, пока список едет мимо. Движение берётся из композиции,
+ * а не из добавленной графики.
+ */
 import Section from '~/components/ui/Section.astro';
 import SectionLabel from '~/components/ui/SectionLabel.astro';
 import SectionHeading from '~/components/ui/SectionHeading.astro';
@@ -11,7 +18,7 @@ const left = processScope.items.slice(0, 4);
 const right = processScope.items.slice(4);
 ---
 
-<Section id="processes" labelledby="processes-heading">
+<Section id="processes" density="tight" labelledby="processes-heading">
   <div class="split">
     <div class="split__aside" data-reveal>
       <SectionLabel>{processScope.label}</SectionLabel>
@@ -19,9 +26,9 @@ const right = processScope.items.slice(4);
       <p class="split__lead">{processScope.lead}</p>
     </div>
 
-    <div class="split__columns" data-reveal style="--reveal-i:1">
-      <IndexedList items={left} start={1} size="md" />
-      <IndexedList items={right} start={5} size="md" />
+    <div class="split__columns">
+      <IndexedList items={left} start={1} size="md" lead data-reveal data-reveal-rows />
+      <IndexedList items={right} start={5} size="md" data-reveal data-reveal-rows style="--reveal-i:1" />
     </div>
   </div>
 </Section>
@@ -29,8 +36,9 @@ const right = processScope.items.slice(4);
 <style>
   .split {
     display: grid;
-    grid-template-columns: 0.75fr 1fr;
-    gap: 60px;
+    grid-template-columns: 0.62fr 1fr;
+    gap: 52px;
+    align-items: start;
   }
 
   .split__aside {
@@ -40,25 +48,37 @@ const right = processScope.items.slice(4);
   }
 
   .split__lead {
-    max-width: 380px;
+    max-width: 340px;
     font-size: var(--fs-body-sm);
     line-height: var(--lh-text);
-    color: var(--olive);
+    color: var(--text-quiet);
   }
 
+  /* Колонки списка неравные: первая несёт крупную ведущую строку,
+     вторая идёт тише. Это и даёт секции контраст масштаба. */
   .split__columns {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    column-gap: 48px;
+    grid-template-columns: 1.12fr 0.88fr;
+    column-gap: 44px;
+  }
+
+  /* Пока список едет мимо, заголовок секции стоит: длинная полоса
+     перестаёт читаться как ещё один одинаковый экран. */
+  @media (min-width: 1024px) {
+    .split__aside {
+      position: sticky;
+      top: 132px;
+    }
   }
 
   @media (max-width: 1023px) {
     .split {
       grid-template-columns: minmax(0, 1fr);
-      gap: 40px;
+      gap: 36px;
     }
 
     .split__lead { max-width: 560px; }
+    .split__columns { grid-template-columns: 1fr 1fr; }
   }
 
   /* Ниже 768 две колонки сливаются в один список.

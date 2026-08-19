@@ -1,10 +1,13 @@
 ---
 /*
- * Легенда к схеме первого экрана: четыре образца цвета с подписями.
- * Читает те же токены, что и сама схема, — расхождение невозможно.
+ * Легенда к схеме первого экрана: четыре образца с подписями.
+ * Образец повторяет способ отрисовки шага в схеме — контур или заливка,
+ * поэтому расхождения между легендой и графикой быть не может.
  */
+import type { LegendItem } from '~/data/content';
+
 interface Props {
-  items: readonly { color: 'mute' | 'olive' | 'sand' | 'ink'; label: string }[];
+  items: readonly LegendItem[];
   class?: string;
 }
 
@@ -15,7 +18,14 @@ const { items, class: className } = Astro.props;
   {
     items.map((item) => (
       <li class="legend__item">
-        <span class:list={['legend__swatch', `legend__swatch--${item.color}`]} aria-hidden="true" />
+        <span
+          class:list={[
+            'legend__swatch',
+            `legend__swatch--${item.color}`,
+            item.outline && 'legend__swatch--outline',
+          ]}
+          aria-hidden="true"
+        />
         <span class="legend__label">{item.label}</span>
       </li>
     ))
@@ -48,9 +58,16 @@ const { items, class: className } = Astro.props;
   .legend__swatch--sand { background: var(--sand); }
   .legend__swatch--ink { background: var(--ink); }
 
+  /* Контур вместо заливки — как обычный шаг процесса в схеме. */
+  .legend__swatch--outline {
+    background: var(--paper);
+    box-shadow: inset 0 0 0 var(--rule) var(--mute);
+  }
+
   .legend__label {
     font-size: var(--fs-label-lg);
     line-height: var(--lh-ui);
+    color: var(--text);
   }
 
   @media (max-width: 479px) {
