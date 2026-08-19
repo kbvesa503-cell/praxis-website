@@ -11,7 +11,8 @@ interface Props {
   class?: string;
 }
 
-const { tone = 'mute', size = 'sm', as: Tag = 'span', id, class: className } = Astro.props;
+const { tone = 'mute', size = 'sm', as: Tag = 'span', id, class: className }: Props =
+  Astro.props;
 ---
 
 <Tag id={id} class:list={['label', `label--${tone}`, `label--${size}`, className]}>
