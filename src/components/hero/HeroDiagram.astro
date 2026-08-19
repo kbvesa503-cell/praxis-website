@@ -1,11 +1,28 @@
 ---
 /*
- * Схема первого экрана: переход от текущего ручного процесса
- * через точку изменения к перестроенной логике.
+ * Схема первого экрана — чертёж одного процесса до и после работы PRAXIS.
  *
- * Геометрия, координаты и цвета перенесены из утверждённого концепта
- * без единой правки. Добавлены только классы — цели для анимации на
- * следующем этапе. Ничего в этом файле не меняет форму схемы.
+ * Читается сверху вниз тремя полосами:
+ *
+ *   1. СЕЙЧАС — процесс идёт по одной оси слева направо. Семь шагов,
+ *      три из них ручные (залиты), под цепочкой — дуга возврата
+ *      на доработку, над шестым шагом — скоба узкого места.
+ *      Сверху размерная линия: длина процесса как размер на чертеже.
+ *
+ *   2. ТОЧКА ИЗМЕНЕНИЯ — от найденного узкого места вниз идёт пунктир
+ *      к линии разреза во всю ширину. Точка изменения стоит не в центре
+ *      «для красоты», а ровно под тем шагом, который её вызвал.
+ *
+ *   3. ПОСЛЕ — четыре шага вместо семи, все перестроенные, без возвратов.
+ *      Размерная линия построена в том же масштабе, что и верхняя:
+ *      сплошная часть — новая длина процесса, пунктирная — то, что снято.
+ *
+ * Смысл композиции: сравнимые размерные линии сверху и снизу показывают
+ * не «хаос → порядок», а укорочение конкретного процесса. Ни одного
+ * элемента без назначения: каждая линия либо шаг, либо связь, либо размер.
+ *
+ * Геометрия в единицах viewBox (504 × 382). Полуцелые координаты —
+ * чтобы линии в 1px ложились на пиксельную сетку без размытия.
  */
 import { hero } from '~/data/content';
 
@@ -14,87 +31,196 @@ interface Props {
 }
 
 const { class: className } = Astro.props;
-const mono = "'IBM Plex Mono', monospace";
+const d = hero.diagram;
+
+/* Цепочка «сейчас»: 7 шагов по 22 px с шагом 74. */
+const beforeX = [18, 92, 166, 240, 314, 388, 462];
+const manual = new Set([1, 3, 5]); // ручные шаги — второй, четвёртый, шестой
+
+/* Узкое место — шестой шаг. Скоба и вертикаль к точке изменения
+   строятся от его координаты, а не вписываются в путь руками. */
+const bnX = beforeX[5];
+const bnMid = bnX + 11;
+
+/* Цепочка «после»: 4 шага по 26 px, вся короче верхней. */
+const afterX = [18, 110, 202, 294];
 ---
 
 <div class:list={['hdw', className]}>
-  <p class="hdw__cap">{hero.diagram.before}</p>
+  <p class="hdw__cap hdw__cap--before">{d.before}</p>
 
   <svg
     class="hd"
     width="504"
-    height="470"
-    viewBox="0 0 504 470"
+    height="382"
+    viewBox="0 0 504 382"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
     role="img"
     aria-labelledby="hd-title hd-desc"
   >
-    <title id="hd-title">Схема перестройки процесса</title>
+    <title id="hd-title">Как PRAXIS перестраивает процесс</title>
     <desc id="hd-desc">
-      Сверху — текущий процесс: цепочка ручных действий с возвратами.
-      В середине — точка изменения. Снизу — перестроенный участок:
-      прямая последовательность автоматизированных шагов.
+      Сверху — процесс как он есть: семь шагов подряд, три из них ручные,
+      с пятого шага идёт возврат на доработку к третьему, шестой шаг отмечен
+      как узкое место. От узкого места вниз идёт линия к точке изменения.
+      Снизу — процесс после перестройки: четыре шага без возвратов и ручных
+      операций. Размерные линии сверху и снизу построены в одном масштабе
+      и показывают, насколько процесс стал короче.
     </desc>
 
-    <!-- Текущая схема: ручные действия и возвраты -->
+    <!-- ─── 1. Процесс как он есть ─────────────────────────────────── -->
+
+    <text class="hd__state hd__state--before" x="0" y="11">{d.before}</text>
+
+    <!-- Размерная линия: длина процесса сейчас. Разорвана под подпись. -->
+    <g class="hd__dim hd__dim--before" stroke="#B5B5B5" stroke-width="1">
+      <path pathLength="1" d="M18.5 40.5 H200"></path>
+      <path pathLength="1" d="M302 40.5 H483.5"></path>
+      <path pathLength="1" d="M18.5 34.5 V46.5"></path>
+      <path pathLength="1" d="M483.5 34.5 V46.5"></path>
+    </g>
+    <text class="hd__note hd__dim-cap" x="251" y="44.5" text-anchor="middle">
+      {d.beforeLength}
+    </text>
+
+    <!-- Узкое место: скоба над шестым шагом. -->
+    <g class="hd__bottleneck">
+      <path
+        class="hd__bracket"
+        pathLength="1"
+        d={`M${bnX - 6.5} 78 V70.5 H${bnX + 28.5} V78`}
+        stroke="#52513C"
+        stroke-width="1"
+      ></path>
+      <text class="hd__note hd__note--olive" x={bnMid} y="62" text-anchor="middle">
+        {d.bottleneck}
+      </text>
+    </g>
+
+    <!-- Связи между шагами. -->
+    <g class="hd__links" stroke="#B5B5B5" stroke-width="1">
+      {
+        beforeX.slice(0, -1).map((x, i) => (
+          <path pathLength="1" d={`M${x + 22} 97.5 H${beforeX[i + 1]}`} />
+        ))
+      }
+    </g>
+
+    <!-- Шаги. Контур — обычный шаг, заливка — ручной. -->
+    <g class="hd__nodes">
+      {
+        beforeX.map((x, i) =>
+          manual.has(i) ? (
+            <rect x={x} y={86} width={22} height={22} fill="#B5B5B5" />
+          ) : (
+            <rect
+              x={x + 0.5}
+              y={86.5}
+              width={21}
+              height={21}
+              fill="#FFFFFF"
+              stroke="#B5B5B5"
+              stroke-width="1"
+            />
+          ),
+        )
+      }
+    </g>
+
+    <!-- Возврат на доработку: с пятого шага обратно на третий. -->
+    <g class="hd__rework">
+      <path
+        class="hd__rework-arc"
+        pathLength="1"
+        d="M325 108 C325 150 177 150 177 108"
+        stroke="#B5B5B5"
+        stroke-width="1"
+      ></path>
+      <path class="hd__rework-tip" d="M177 108 L172 117.5 L182 117.5 Z" fill="#B5B5B5"></path>
+      <text class="hd__note" x="251" y="158" text-anchor="middle">{d.rework}</text>
+    </g>
+
+    <!-- ─── 2. Точка изменения ─────────────────────────────────────── -->
+
+    <!-- Пунктир от узкого места вниз: меняем именно здесь. -->
+    <path
+      class="hd__grow hd__grow--v hd__drop"
+      d={`M${bnMid + 0.5} 112 V195`}
+      stroke="#52513C"
+      stroke-width="1"
+      stroke-dasharray="4 4"
+    ></path>
+
+    <!-- Линия разреза во всю ширину: ниже неё процесс уже другой.
+         Подпись стоит над линией, поэтому линия идёт без разрыва
+         и не зависит от того, как сильно подпись выросла на узком экране. -->
+    <path class="hd__cut" pathLength="1" d="M0 205.5 H504" stroke="#52513C" stroke-width="1"></path>
+
+    <rect class="hd__pivot" x={bnMid - 9} y="196.5" width="18" height="18" fill="#52513C"></rect>
+
     <text
-      class="hd__label hd__label--before"
-      x="0" y="14"
-      font-family={mono} font-size="11" letter-spacing="1.7" fill="#B5B5B5"
-    >{hero.diagram.before}</text>
+      class="hd__note hd__note--lead hd__note--olive"
+      x={bnMid - 18}
+      y="191"
+      text-anchor="end">{d.pivot}</text>
 
-    <g class="hd__edges" stroke="#B5B5B5" stroke-width="1">
-      <path class="hd__edge hd__edge--main" pathLength="1" d="M26 66 L108 122 L190 66 L272 136 L354 70 L436 130"></path>
-      <path class="hd__edge hd__edge--return" pathLength="1" d="M272 136 L190 184"></path>
-      <path class="hd__edge hd__edge--return" pathLength="1" d="M190 184 L108 122"></path>
+    <g class="hd__arrow">
+      <path
+        class="hd__grow hd__grow--v"
+        d={`M${bnMid + 0.5} 218 V229`}
+        stroke="#52513C"
+        stroke-width="1"
+        stroke-dasharray="4 4"
+      ></path>
+      <path d={`M${bnMid + 0.5} 238 L${bnMid - 4.5} 228 L${bnMid + 5.5} 228 Z`} fill="#52513C"></path>
     </g>
 
-    <g class="hd__nodes" fill="#B5B5B5">
-      <rect x="14" y="54" width="24" height="24"></rect>
-      <rect x="96" y="110" width="24" height="24"></rect>
-      <rect x="178" y="54" width="24" height="24"></rect>
-      <rect x="260" y="124" width="24" height="24"></rect>
-      <rect x="342" y="58" width="24" height="24"></rect>
-      <rect x="424" y="118" width="24" height="24"></rect>
-      <rect x="178" y="172" width="24" height="24"></rect>
+    <!-- ─── 3. Процесс после перестройки ───────────────────────────── -->
+
+    <rect class="hd__band" x="0" y="244" width="504" height="96" fill="#D8C4A3"></rect>
+
+    <g class="hd__after-caps">
+      <text class="hd__note hd__note--ink" x="169" y="268" text-anchor="middle">
+        {d.afterLength}
+      </text>
+      <text class="hd__note hd__note--olive" x="402" y="268" text-anchor="middle">
+        {d.removed}
+      </text>
     </g>
 
-    <!-- Точка изменения -->
-    <g class="hd__pivot-lines" stroke="#52513C" stroke-width="1" stroke-dasharray="4 4">
-      <path d="M152 232 L252 332"></path>
-      <path d="M252 232 L252 332"></path>
-      <path d="M352 232 L252 332"></path>
+    <!-- Размерная линия в масштабе верхней: сплошная — новая длина,
+         пунктирная — снятая часть процесса. -->
+    <g class="hd__dim hd__dim--after">
+      <path pathLength="1" d="M18.5 278.5 H319.5" stroke="#000000" stroke-width="1"></path>
+      <path pathLength="1" d="M18.5 272.5 V284.5" stroke="#000000" stroke-width="1"></path>
+      <path pathLength="1" d="M319.5 272.5 V284.5" stroke="#000000" stroke-width="1"></path>
+      <path
+        class="hd__grow hd__grow--h hd__dim-gone"
+        d="M319.5 278.5 H483.5"
+        stroke="#52513C"
+        stroke-width="1"
+        stroke-dasharray="5 5"
+      ></path>
+      <path pathLength="1" d="M483.5 272.5 V284.5" stroke="#52513C" stroke-width="1"></path>
     </g>
 
-    <rect class="hd__pivot" x="242" y="300" width="20" height="20" fill="#52513C"></rect>
-
-    <text
-      class="hd__label hd__label--pivot"
-      x="278" y="316"
-      font-family={mono} font-size="11" letter-spacing="1.7" fill="#52513C"
-    >{hero.diagram.pivot}</text>
-
-    <!-- Новая логика процесса -->
-    <rect class="hd__band" x="0" y="346" width="504" height="80" fill="#D8C4A3"></rect>
-
-    <path class="hd__baseline" pathLength="1" d="M32 386 L472 386" stroke="#000000" stroke-width="1"></path>
+    <g class="hd__after-links" stroke="#000000" stroke-width="1">
+      {
+        afterX.slice(0, -1).map((x, i) => (
+          <path pathLength="1" d={`M${x + 26} 307.5 H${afterX[i + 1]}`} />
+        ))
+      }
+    </g>
 
     <g class="hd__after-nodes" fill="#000000">
-      <rect x="18" y="372" width="28" height="28"></rect>
-      <rect x="164" y="372" width="28" height="28"></rect>
-      <rect x="312" y="372" width="28" height="28"></rect>
-      <rect x="458" y="372" width="28" height="28"></rect>
+      {afterX.map((x) => <rect x={x} y={294} width={26} height={26} />)}
     </g>
 
-    <text
-      class="hd__label hd__label--after"
-      x="0" y="452"
-      font-family={mono} font-size="11" letter-spacing="1.7" fill="#000000"
-    >{hero.diagram.after}</text>
+    <text class="hd__state hd__state--after" x="0" y="368">{d.after}</text>
   </svg>
 
-  <p class="hdw__cap">{hero.diagram.after}</p>
+  <p class="hdw__cap hdw__cap--after">{d.after}</p>
 </div>
 
 <style>
@@ -111,18 +237,50 @@ const mono = "'IBM Plex Mono', monospace";
     height: auto;
   }
 
-  /* На утверждённом холсте подписи живут внутри схемы. */
+  /* Подписи внутри схемы: mono, капитель, трекинг в em — чтобы
+     при масштабировании кегля не разъезжались по ширине холста. */
+  .hd :global(text) {
+    font-family: var(--font-mono);
+    font-weight: 400;
+    text-transform: uppercase;
+  }
+
+  /* Заголовки состояний — крупнее и контрастнее подписей внутри. */
+  .hd :global(.hd__state) {
+    font-size: 11px;
+    letter-spacing: 0.16em;
+  }
+
+  .hd :global(.hd__state--before) { fill: var(--text-meta); }
+  .hd :global(.hd__state--after) { fill: var(--ink); }
+
+  /* Служебные подписи схемы. Раньше вся графика подписывалась #B5B5B5;
+     теперь серым остаются только линии, а текст читается. */
+  .hd :global(.hd__note) {
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    fill: var(--text-meta);
+  }
+
+  .hd :global(.hd__note--lead) { font-size: 11px; }
+  .hd :global(.hd__note--olive) { fill: var(--olive); }
+  .hd :global(.hd__note--ink) { fill: var(--ink); }
+
+  /* На утверждённом холсте подписи состояний живут внутри схемы. */
   .hdw__cap { display: none; }
 
-  /* Ниже ~560 px схема начинает сжиматься, и подписи внутри SVG
-     масштабируются вместе с ней до нечитаемого размера. Две внешние
-     подписи выносятся в HTML и остаются 11 px при любой ширине;
-     подпись точки изменения привязана к схеме и остаётся внутри —
-     её кегль компенсируется ступенями, чтобы после масштабирования
-     она читалась примерно как на десктопе. */
-  @media (max-width: 560px) {
-    .hd :global(.hd__label--before),
-    .hd :global(.hd__label--after) { display: none; }
+  /*
+   * Ниже ~540 px схема сжимается, и текст внутри неё масштабируется
+   * вместе с геометрией. Две длинные подписи состояний выносятся
+   * в HTML и остаются 11 px при любой ширине; короткие подписи внутри
+   * схемы компенсируются ступенями кегля так, чтобы после масштабирования
+   * они читались примерно как на десктопе. Трекинг задан в em,
+   * поэтому строки при этом не выходят за края холста.
+   */
+  @media (max-width: 540px) {
+    .hd :global(.hd__state) { display: none; }
+
+    .hd { margin-block: -6.8% -8.2%; }
 
     .hdw__cap {
       display: block;
@@ -131,19 +289,27 @@ const mono = "'IBM Plex Mono', monospace";
       line-height: var(--lh-ui);
       letter-spacing: var(--ls-label);
       text-transform: uppercase;
-      color: var(--mute);
     }
 
-    .hdw__cap:last-child { color: var(--ink); }
+    .hdw__cap--before { color: var(--text-meta); }
+    .hdw__cap--after { color: var(--ink); }
 
-    .hd :global(.hd__label--pivot) { font-size: 12px; }
+    .hd :global(.hd__note) { font-size: 11.5px; }
+    .hd :global(.hd__note--lead) { font-size: 12.5px; }
   }
 
   @media (max-width: 460px) {
-    .hd :global(.hd__label--pivot) { font-size: 14px; }
+    .hd :global(.hd__note) { font-size: 12.5px; }
+    .hd :global(.hd__note--lead) { font-size: 13.5px; }
   }
 
   @media (max-width: 400px) {
-    .hd :global(.hd__label--pivot) { font-size: 17px; }
+    .hd :global(.hd__note) { font-size: 14px; }
+    .hd :global(.hd__note--lead) { font-size: 15.5px; }
+  }
+
+  @media (max-width: 360px) {
+    .hd :global(.hd__note) { font-size: 15.5px; }
+    .hd :global(.hd__note--lead) { font-size: 17px; }
   }
 </style>

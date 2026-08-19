@@ -1,0 +1,106 @@
+---
+/*
+ * Разбор кейса в четырёх колонках: было → сделали → стало → эффект.
+ * Линии те же, что в ряду показателей: верхняя чёрная, между колонками
+ * серые вертикали. Внутри колонки линий нет — иначе на четырёх колонках
+ * получается сетка, в которой текст теряется.
+ */
+import type { CaseColumn } from '~/data/content';
+
+interface Props {
+  columns: readonly CaseColumn[];
+  class?: string;
+  [key: string]: unknown;
+}
+
+const { columns, class: className, ...rest } = Astro.props;
+---
+
+<div
+  class:list={['cols', className]}
+  style={`--cols-n:${columns.length}`}
+  {...rest}
+>
+  {
+    columns.map((col) => (
+      <section class:list={['col', col.accent && 'is-accent']}>
+        <h3 class="col__label">{col.label}</h3>
+        <ul class="col__list">
+          {col.items.map((item) => <li class="col__item">{item}</li>)}
+        </ul>
+      </section>
+    ))
+  }
+</div>
+
+<style>
+  .cols {
+    display: grid;
+    grid-template-columns: repeat(var(--cols-n), 1fr);
+    border-top: var(--rule) solid var(--line-strong);
+  }
+
+  .col {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 24px 24px 0;
+    border-right: var(--rule) solid var(--line);
+  }
+
+  .col:first-child { padding-left: 0; }
+  .col:last-child { padding-right: 0; border-right: 0; }
+
+  .col__label {
+    font-family: var(--font-mono);
+    font-weight: 400;
+    font-size: var(--fs-label);
+    line-height: var(--lh-ui);
+    letter-spacing: var(--ls-label-mid);
+    text-transform: uppercase;
+    color: var(--text-meta);
+  }
+
+  .col.is-accent .col__label { color: var(--olive); }
+
+  .col__list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .col__item {
+    font-size: var(--fs-ui);
+    line-height: 1.45;
+    color: var(--text);
+  }
+
+  /* Разделители между колонками разворачиваются в горизонтальные,
+     как в ряду показателей: линия между ячейками есть всегда. */
+  @media (min-width: 600px) and (max-width: 1023px) {
+    .cols { grid-template-columns: repeat(2, 1fr); }
+
+    .col { padding: 24px; }
+    .col:nth-child(odd) {
+      padding-left: 0;
+      border-right: var(--rule) solid var(--line);
+    }
+    .col:nth-child(even) {
+      padding-right: 0;
+      border-right: 0;
+    }
+    .col:nth-child(n + 3) { border-top: var(--rule) solid var(--line); }
+    .col:nth-last-child(-n + 2) { padding-bottom: 0; }
+  }
+
+  @media (max-width: 599px) {
+    .cols { grid-template-columns: minmax(0, 1fr); }
+
+    .col {
+      padding: 22px 0;
+      border-right: 0;
+    }
+    .col:not(:first-child) { border-top: var(--rule) solid var(--line); }
+    .col:last-child { padding-bottom: 0; }
+  }
+</style>

@@ -25,12 +25,12 @@
 
 /* ---- Проявление блоков при прокрутке ---------------------------------- */
 
-.motion [data-reveal] {
+.motion [data-reveal]:not([data-reveal-rows]) {
   opacity: 0;
   transform: translateY(12px);
 }
 
-.motion [data-reveal].is-in {
+.motion [data-reveal]:not([data-reveal-rows]).is-in {
   opacity: 1;
   transform: none;
   transition:
@@ -39,28 +39,83 @@
   transition-delay: calc(var(--reveal-i, 0) * 90ms);
 }
 
+/*
+ * Списки, полосы шагов и ряды показателей проявляются построчно,
+ * а не блоком целиком: страница читается как последовательность,
+ * а не как набор плашек. Смещение задаётся порядком строки —
+ * разметке для этого ничего знать о движении не нужно.
+ */
+.motion [data-reveal-rows] > * {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+.motion [data-reveal-rows].is-in > * {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity 420ms var(--ease),
+    transform 420ms var(--ease);
+  transition-delay: calc(var(--reveal-i, 0) * 90ms + var(--row-d, 0ms));
+}
+
+.motion [data-reveal-rows].is-in > *:nth-child(1) { --row-d: 0ms; }
+.motion [data-reveal-rows].is-in > *:nth-child(2) { --row-d: 55ms; }
+.motion [data-reveal-rows].is-in > *:nth-child(3) { --row-d: 110ms; }
+.motion [data-reveal-rows].is-in > *:nth-child(4) { --row-d: 165ms; }
+.motion [data-reveal-rows].is-in > *:nth-child(5) { --row-d: 220ms; }
+.motion [data-reveal-rows].is-in > *:nth-child(6) { --row-d: 275ms; }
+.motion [data-reveal-rows].is-in > *:nth-child(7) { --row-d: 330ms; }
+.motion [data-reveal-rows].is-in > *:nth-child(n + 8) { --row-d: 385ms; }
+
 /* ---- Схема первого экрана --------------------------------------------- */
 /*
- * Три такта: текущая схема → точка изменения → новая логика процесса.
- * Один прогон, без повторов. Геометрия не меняется — только видимость,
- * длина штриха и раскрытие областей.
+ * Три такта, один прогон, без повторов: процесс как он есть → точка
+ * изменения → процесс после перестройки. Порядок отрисовки повторяет
+ * порядок работы: сначала процесс, потом найденные в нём проблемы,
+ * потом решение. Геометрия не меняется — только видимость, длина
+ * штриха и раскрытие областей.
  */
 
-.motion .hd--anim .hd__label--before,
-.motion .hd--anim .hd__label--pivot,
-.motion .hd--anim .hd__label--after,
+.motion .hd--anim .hd__state,
+.motion .hd--anim .hd__note,
 .motion .hd--anim .hd__nodes rect,
-.motion .hd--anim .hd__after-nodes rect { opacity: 0; }
+.motion .hd--anim .hd__after-nodes rect,
+.motion .hd--anim .hd__rework-tip,
+.motion .hd--anim .hd__arrow path:last-child { opacity: 0; }
 
 /* pathLength="1" нормализует длину контура, поэтому штрих задаётся
    единицей независимо от реальной геометрии пути. */
-.motion .hd--anim .hd__edge,
-.motion .hd--anim .hd__baseline {
+.motion .hd--anim .hd__dim path:not(.hd__grow),
+.motion .hd--anim .hd__links path,
+.motion .hd--anim .hd__after-links path,
+.motion .hd--anim .hd__bracket,
+.motion .hd--anim .hd__rework-arc,
+.motion .hd--anim .hd__cut {
   stroke-dasharray: 1;
   stroke-dashoffset: 1;
 }
 
-.motion .hd--anim .hd__pivot-lines { clip-path: inset(0 0 100% 0); }
+/*
+ * Пунктирные линии нельзя проявлять через stroke-dashoffset: штрих
+ * задан тем же свойством, и анимация подменила бы пунктир сплошной
+ * линией. Они растут масштабом от своего начала — рисунок штриха
+ * при этом сохраняется.
+ */
+.motion .hd--anim .hd__grow {
+  transform-box: fill-box;
+}
+
+.motion .hd--anim .hd__grow--v {
+  transform: scaleY(0);
+  transform-origin: center top;
+}
+
+.motion .hd--anim .hd__grow--h {
+  transform: scaleX(0);
+  transform-origin: left center;
+}
+
 .motion .hd--anim .hd__band { clip-path: inset(0 100% 0 0); }
 
 .motion .hd--anim .hd__pivot {
@@ -69,80 +124,154 @@
   transform-origin: center;
 }
 
-/* Такт 1 — как процесс работает сейчас */
+/* ---- Такт 1: процесс как он есть -------------------------------------- */
 
-.motion .hd--anim.is-playing .hd__label--before {
+.motion .hd--anim.is-playing .hd__state--before {
   opacity: 1;
-  transition: opacity 400ms var(--ease) 60ms;
+  transition: opacity 380ms var(--ease) 40ms;
+}
+
+.motion .hd--anim.is-playing .hd__dim--before path {
+  stroke-dashoffset: 0;
+  transition: stroke-dashoffset 460ms var(--ease) 120ms;
+}
+
+.motion .hd--anim.is-playing .hd__dim-cap {
+  opacity: 1;
+  transition: opacity 320ms var(--ease) 380ms;
 }
 
 .motion .hd--anim.is-playing .hd__nodes rect {
   opacity: 1;
-  transition: opacity 320ms var(--ease);
+  transition: opacity 300ms var(--ease);
 }
 
-.motion .hd--anim.is-playing .hd__nodes rect:nth-child(1) { transition-delay: 0ms; }
-.motion .hd--anim.is-playing .hd__nodes rect:nth-child(2) { transition-delay: 60ms; }
-.motion .hd--anim.is-playing .hd__nodes rect:nth-child(3) { transition-delay: 120ms; }
-.motion .hd--anim.is-playing .hd__nodes rect:nth-child(4) { transition-delay: 180ms; }
-.motion .hd--anim.is-playing .hd__nodes rect:nth-child(5) { transition-delay: 240ms; }
-.motion .hd--anim.is-playing .hd__nodes rect:nth-child(6) { transition-delay: 300ms; }
+.motion .hd--anim.is-playing .hd__nodes rect:nth-child(1) { transition-delay: 220ms; }
+.motion .hd--anim.is-playing .hd__nodes rect:nth-child(2) { transition-delay: 265ms; }
+.motion .hd--anim.is-playing .hd__nodes rect:nth-child(3) { transition-delay: 310ms; }
+.motion .hd--anim.is-playing .hd__nodes rect:nth-child(4) { transition-delay: 355ms; }
+.motion .hd--anim.is-playing .hd__nodes rect:nth-child(5) { transition-delay: 400ms; }
+.motion .hd--anim.is-playing .hd__nodes rect:nth-child(6) { transition-delay: 445ms; }
+.motion .hd--anim.is-playing .hd__nodes rect:nth-child(7) { transition-delay: 490ms; }
 
-/* Седьмой узел — тот, к которому процесс возвращается.
-   Появляется вместе с возвратными связями, а не в общей очереди. */
-.motion .hd--anim.is-playing .hd__nodes rect:nth-child(7) { transition-delay: 820ms; }
-
-.motion .hd--anim.is-playing .hd__edge--main {
+.motion .hd--anim.is-playing .hd__links path {
   stroke-dashoffset: 0;
-  transition: stroke-dashoffset 760ms var(--ease) 120ms;
+  transition: stroke-dashoffset 260ms var(--ease);
 }
 
-/* Возвраты дорисовываются последними и медленнее: это крюк в процессе. */
-.motion .hd--anim.is-playing .hd__edge--return {
+.motion .hd--anim.is-playing .hd__links path:nth-child(1) { transition-delay: 250ms; }
+.motion .hd--anim.is-playing .hd__links path:nth-child(2) { transition-delay: 295ms; }
+.motion .hd--anim.is-playing .hd__links path:nth-child(3) { transition-delay: 340ms; }
+.motion .hd--anim.is-playing .hd__links path:nth-child(4) { transition-delay: 385ms; }
+.motion .hd--anim.is-playing .hd__links path:nth-child(5) { transition-delay: 430ms; }
+.motion .hd--anim.is-playing .hd__links path:nth-child(6) { transition-delay: 475ms; }
+
+/* Возврат дорисовывается после всей цепочки и медленнее:
+   это крюк в процессе, а не его часть. */
+.motion .hd--anim.is-playing .hd__rework-arc {
   stroke-dashoffset: 0;
-  transition: stroke-dashoffset 520ms var(--ease) 780ms;
+  transition: stroke-dashoffset 520ms var(--ease) 760ms;
 }
 
-/* Такт 2 — точка изменения */
+.motion .hd--anim.is-playing .hd__rework-tip {
+  opacity: 1;
+  transition: opacity 220ms var(--ease) 1240ms;
+}
 
-.motion .hd--anim.is-playing .hd__pivot-lines {
-  clip-path: inset(0);
-  transition: clip-path 520ms var(--ease) 1020ms;
+.motion .hd--anim.is-playing .hd__rework .hd__note {
+  opacity: 1;
+  transition: opacity 320ms var(--ease) 1300ms;
+}
+
+/* Узкое место находится параллельно возврату — это одна диагностика. */
+.motion .hd--anim.is-playing .hd__bracket {
+  stroke-dashoffset: 0;
+  transition: stroke-dashoffset 380ms var(--ease) 980ms;
+}
+
+.motion .hd--anim.is-playing .hd__bottleneck .hd__note {
+  opacity: 1;
+  transition: opacity 320ms var(--ease) 1180ms;
+}
+
+/* ---- Такт 2: точка изменения ------------------------------------------ */
+
+.motion .hd--anim.is-playing .hd__drop {
+  transform: scaleY(1);
+  transition: transform 400ms var(--ease) 1440ms;
+}
+
+.motion .hd--anim.is-playing .hd__cut {
+  stroke-dashoffset: 0;
+  transition: stroke-dashoffset 620ms var(--ease) 1640ms;
 }
 
 .motion .hd--anim.is-playing .hd__pivot {
   transform: scale(1);
-  transition: transform 420ms var(--ease) 1240ms;
+  transition: transform 360ms var(--ease) 1820ms;
 }
 
-.motion .hd--anim.is-playing .hd__label--pivot {
+.motion .hd--anim.is-playing .hd__note--lead {
   opacity: 1;
-  transition: opacity 380ms var(--ease) 1420ms;
+  transition: opacity 340ms var(--ease) 1980ms;
 }
 
-/* Такт 3 — перестроенный процесс */
+.motion .hd--anim.is-playing .hd__arrow .hd__grow {
+  transform: scaleY(1);
+  transition: transform 240ms var(--ease) 2080ms;
+}
+
+.motion .hd--anim.is-playing .hd__arrow path:last-child {
+  opacity: 1;
+  transition: opacity 200ms var(--ease) 2220ms;
+}
+
+/* ---- Такт 3: процесс после перестройки -------------------------------- */
 
 .motion .hd--anim.is-playing .hd__band {
   clip-path: inset(0);
-  transition: clip-path 700ms var(--ease) 1560ms;
+  transition: clip-path 620ms var(--ease) 2160ms;
 }
 
-.motion .hd--anim.is-playing .hd__baseline {
+.motion .hd--anim.is-playing .hd__dim--after path:not(.hd__grow) {
   stroke-dashoffset: 0;
-  transition: stroke-dashoffset 640ms var(--ease) 1700ms;
+  transition: stroke-dashoffset 520ms var(--ease) 2360ms;
 }
+
+/* Пунктирный остаток размера — снятая часть процесса — дорисовывается
+   последним: сначала видно новую длину, потом то, что ушло. */
+.motion .hd--anim.is-playing .hd__dim-gone {
+  transform: scaleX(1);
+  transition: transform 480ms var(--ease) 2620ms;
+}
+
+/* Подписи «4 шага» и «сокращено» приходят вместе с размерной линией:
+   вместе они и есть снятая часть процесса. */
+.motion .hd--anim.is-playing .hd__after-caps .hd__note {
+  opacity: 1;
+  transition: opacity 320ms var(--ease) 2560ms;
+}
+
+.motion .hd--anim.is-playing .hd__after-links path {
+  stroke-dashoffset: 0;
+  transition: stroke-dashoffset 240ms var(--ease);
+}
+
+.motion .hd--anim.is-playing .hd__after-links path:nth-child(1) { transition-delay: 2480ms; }
+.motion .hd--anim.is-playing .hd__after-links path:nth-child(2) { transition-delay: 2545ms; }
+.motion .hd--anim.is-playing .hd__after-links path:nth-child(3) { transition-delay: 2610ms; }
 
 .motion .hd--anim.is-playing .hd__after-nodes rect {
   opacity: 1;
-  transition: opacity 300ms var(--ease);
+  transition: opacity 280ms var(--ease);
 }
 
-.motion .hd--anim.is-playing .hd__after-nodes rect:nth-child(1) { transition-delay: 1880ms; }
-.motion .hd--anim.is-playing .hd__after-nodes rect:nth-child(2) { transition-delay: 2010ms; }
-.motion .hd--anim.is-playing .hd__after-nodes rect:nth-child(3) { transition-delay: 2140ms; }
-.motion .hd--anim.is-playing .hd__after-nodes rect:nth-child(4) { transition-delay: 2270ms; }
+.motion .hd--anim.is-playing .hd__after-nodes rect:nth-child(1) { transition-delay: 2440ms; }
+.motion .hd--anim.is-playing .hd__after-nodes rect:nth-child(2) { transition-delay: 2505ms; }
+.motion .hd--anim.is-playing .hd__after-nodes rect:nth-child(3) { transition-delay: 2570ms; }
+.motion .hd--anim.is-playing .hd__after-nodes rect:nth-child(4) { transition-delay: 2635ms; }
 
-.motion .hd--anim.is-playing .hd__label--after {
+.motion .hd--anim.is-playing .hd__state--after {
   opacity: 1;
-  transition: opacity 400ms var(--ease) 2320ms;
+  transition: opacity 380ms var(--ease) 2720ms;
 }
