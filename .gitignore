@@ -1,5 +1,12 @@
 node_modules/
 dist/
 .astro/
+.vercel/
 .DS_Store
 *.log
+
+# Секреты формы заявок задаются в окружении Vercel и в репозиторий
+# не попадают ни при каких обстоятельствах.
+.env
+.env.*
+!.env.example

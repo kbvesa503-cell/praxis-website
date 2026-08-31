@@ -7,17 +7,32 @@
  * страницу и не меняет её композицию. Оформление собрано из тех же
  * элементов системы: волосяные линии, mono-метки, пилюля действия.
  * Ни карточек, ни теней, ни скруглённых полей.
+ *
+ * Ошибка поля живёт рядом с полем и связана с ним через aria-describedby,
+ * поэтому скринридер читает её при переходе на поле, а не только в общем
+ * статусе внизу.
  */
 import SectionLabel from './SectionLabel.astro';
 import SectionHeading from './SectionHeading.astro';
 import Button from './Button.astro';
 import { contactForm } from '~/data/content';
 
-const f = contactForm.fields;
+const fields = Object.entries(contactForm.fields) as [
+  string,
+  { label: string; required: boolean; max: number; multiline?: boolean },
+][];
+
+/* Автозаполнение подсказываем там, где браузеру есть что предложить.
+   У «какой процесс» такого соответствия нет. */
+const autocomplete: Record<string, string> = {
+  name: 'name',
+  company: 'organization',
+  contact: 'tel',
+};
 ---
 
 <dialog class="cdlg" id="contact-dialog" aria-labelledby="cdlg-heading">
-  <form class="cdlg__panel" method="dialog" data-contact-form novalidate>
+  <form class="cdlg__panel" data-contact-form novalidate>
     <button type="button" class="cdlg__close" data-close-contact>
       {contactForm.close}
     </button>
@@ -31,33 +46,56 @@ const f = contactForm.fields;
     </div>
 
     <div class="cdlg__fields">
-      <label class="cdlg__field">
-        <span class="cdlg__label">{f.name}</span>
-        <input class="cdlg__input" name="name" type="text" autocomplete="name" required />
-      </label>
+      {
+        fields.map(([name, field]) => (
+          <div class="cdlg__field" data-field={name}>
+            <label class="cdlg__label" for={`cdlg-${name}`}>
+              {field.label}
+              {!field.required && (
+                <span class="cdlg__opt">{` · ${contactForm.optionalHint}`}</span>
+              )}
+            </label>
 
-      <label class="cdlg__field">
-        <span class="cdlg__label">{f.company}</span>
-        <input class="cdlg__input" name="company" type="text" autocomplete="organization" />
-      </label>
+            {field.multiline ? (
+              <textarea
+                class="cdlg__input cdlg__input--area"
+                id={`cdlg-${name}`}
+                name={name}
+                rows="3"
+                maxlength={field.max}
+                aria-describedby={`cdlg-${name}-error`}
+              />
+            ) : (
+              <input
+                class="cdlg__input"
+                id={`cdlg-${name}`}
+                name={name}
+                type="text"
+                maxlength={field.max}
+                autocomplete={autocomplete[name]}
+                required={field.required || undefined}
+                aria-required={field.required ? 'true' : undefined}
+                aria-describedby={`cdlg-${name}-error`}
+              />
+            )}
 
-      <label class="cdlg__field">
-        <span class="cdlg__label">{f.contact}</span>
-        <input class="cdlg__input" name="contact" type="text" autocomplete="email" required />
-      </label>
-
-      <label class="cdlg__field">
-        <span class="cdlg__label">{f.process}</span>
-        <textarea class="cdlg__input cdlg__input--area" name="process" rows="3"></textarea>
-      </label>
+            <p class="cdlg__error" id={`cdlg-${name}-error`} data-field-error />
+          </div>
+        ))
+      }
     </div>
 
-    {/* Ловушка для ботов: поле скрыто от людей и от скринридеров. */}
+    {/* Ловушка для ботов: поле скрыто от людей и от скринридеров.
+        Заполнено — заявка не отправляется, но отвечаем как при успехе. */}
     <div class="cdlg__trap" aria-hidden="true">
-      <label>
-        Не заполняйте это поле
-        <input type="text" name="company_website" tabindex="-1" autocomplete="off" />
-      </label>
+      <label for="cdlg-company-website">Не заполняйте это поле</label>
+      <input
+        id="cdlg-company-website"
+        type="text"
+        name="company_website"
+        tabindex="-1"
+        autocomplete="off"
+      />
     </div>
 
     <div class="cdlg__foot">
@@ -100,7 +138,7 @@ const f = contactForm.fields;
     font-size: var(--fs-label);
     letter-spacing: var(--ls-label);
     text-transform: uppercase;
-    color: var(--mute);
+    color: var(--text-meta);
     transition: color var(--dur-fast) var(--ease);
   }
 
@@ -139,8 +177,12 @@ const f = contactForm.fields;
     font-size: var(--fs-label);
     letter-spacing: var(--ls-label);
     text-transform: uppercase;
-    color: var(--mute);
+    color: var(--text-meta);
   }
+
+  /* Необязательность — часть метки, а не отдельная подпись:
+     иначе в форме из четырёх полей появляется пятый уровень текста. */
+  .cdlg__opt { color: var(--text-label); }
 
   .cdlg__input {
     width: 100%;
@@ -155,7 +197,20 @@ const f = contactForm.fields;
     min-height: 66px;
   }
 
-  .cdlg__field:has(.cdlg__input:user-invalid) .cdlg__label { color: var(--olive); }
+  /* Поле с ошибкой: линия под ним темнеет до оливы, метка тоже.
+     Ни красного, ни иконок — шестого цвета в системе нет. */
+  .cdlg__field[data-invalid] { border-top-color: var(--olive); }
+  .cdlg__field[data-invalid] + .cdlg__field { border-top-color: var(--olive); }
+  .cdlg__field[data-invalid]:last-child { border-bottom-color: var(--olive); }
+  .cdlg__field[data-invalid] .cdlg__label { color: var(--olive); }
+
+  .cdlg__error {
+    font-size: var(--fs-caption);
+    line-height: var(--lh-ui);
+    color: var(--olive);
+  }
+
+  .cdlg__error:empty { display: none; }
 
   .cdlg__trap {
     position: absolute;
@@ -173,7 +228,7 @@ const f = contactForm.fields;
   }
 
   .cdlg__status {
-    font-size: var(--fs-caption);
+    font-size: var(--fs-ui);
     line-height: var(--lh-ui);
     color: var(--text-quiet);
   }
@@ -181,6 +236,12 @@ const f = contactForm.fields;
   .cdlg__status:empty { display: none; }
 
   .cdlg[data-state='error'] .cdlg__status { color: var(--olive); }
+
+  /* Кнопка на время запроса перестаёт быть кликабельной и выглядит так же. */
+  .cdlg__foot :global(.btn[disabled]) {
+    opacity: 0.55;
+    cursor: default;
+  }
 
   @media (prefers-reduced-motion: reduce) {
     .cdlg__close { transition: none; }
