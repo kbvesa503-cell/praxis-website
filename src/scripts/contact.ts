@@ -8,6 +8,7 @@
  */
 import { contact } from '~/data/config';
 import { contactForm } from '~/data/content';
+import { track } from '~/scripts/analytics';
 
 type State = 'idle' | 'sending' | 'sent' | 'error';
 
@@ -60,6 +61,8 @@ function setState(state: State, message = ''): void {
 
 function open(trigger: HTMLElement | null): void {
   if (!dialog || !form) return;
+
+  track('form_open', { place: trigger?.dataset.cta });
 
   opener = trigger;
   clearErrors();
@@ -120,6 +123,7 @@ if (dialog && form && status && submit) {
   document.querySelectorAll<HTMLElement>('[data-open-contact]').forEach((el) => {
     el.addEventListener('click', (event) => {
       event.preventDefault();
+      track('cta_click', { place: el.dataset.cta });
       open(el);
     });
   });
@@ -191,14 +195,18 @@ if (dialog && form && status && submit) {
       if (!response.ok || !body.ok) {
         /* Сервер может назвать конкретные поля — подсвечиваем их. */
         body.fields?.forEach((name) => setFieldError(name, contactForm.errors.required));
+        /* В аналитику уходит только код отказа — содержимое формы никогда. */
+        track('lead_submit_error', { reason: body.error ?? 'unknown' });
         setState('error', messageFor(body.error));
         return;
       }
 
+      track('lead_submit_success');
       form.reset();
       clearErrors();
       setState('sent', contactForm.success);
     } catch {
+      track('lead_submit_error', { reason: 'network' });
       setState('error', contactForm.errors.network);
     }
   });

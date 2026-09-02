@@ -13,6 +13,9 @@ interface Props {
   size?: 'sm' | 'md';
   /** Куда вести, пока форма не подключена. */
   fallbackHref?: string;
+  /** Место кнопки на странице — уходит в аналитику как data-cta.
+      Это значение из закрытого списка, а не пользовательский ввод. */
+  place?: 'header' | 'hero' | 'first_step' | 'final_cta';
   class?: string;
 }
 
@@ -20,17 +23,18 @@ const {
   variant = 'onLight',
   size = 'md',
   fallbackHref = '#contact',
+  place,
   class: className,
 } = Astro.props;
 ---
 
 {
   isContactEnabled ? (
-    <Button variant={variant} size={size} class={className} data-open-contact>
+    <Button variant={variant} size={size} class={className} data-cta={place} data-open-contact>
       <slot />
     </Button>
   ) : (
-    <Button variant={variant} size={size} class={className} href={fallbackHref}>
+    <Button variant={variant} size={size} class={className} data-cta={place} href={fallbackHref}>
       <slot />
     </Button>
   )
